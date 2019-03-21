@@ -1,8 +1,15 @@
-import { getCachedPredictionContext } from "./../PredictionContext";
-import { ATNConfigSet } from "./ATNConfigSet";
-import { DFAState } from "./../dfa/DFAState";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ATNSimulator = ATNSimulator;
 
-export function ATNSimulator(atn, sharedContextCache) {
+var _PredictionContext = require("./../PredictionContext");
+
+var _ATNConfigSet = require("./ATNConfigSet");
+
+var _DFAState = require("./../dfa/DFAState");
+
+function ATNSimulator(atn, sharedContextCache) {
 
     // The context cache maps all PredictionContext objects that are ==
     //  to a single cached copy. This cache is shared across all contexts
@@ -30,13 +37,12 @@ export function ATNSimulator(atn, sharedContextCache) {
 }
 
 // Must distinguish between missing edge and edge we know leads nowhere///
-ATNSimulator.ERROR = new DFAState(0x7FFFFFFF, new ATNConfigSet());
+ATNSimulator.ERROR = new _DFAState.DFAState(0x7FFFFFFF, new _ATNConfigSet.ATNConfigSet());
 
-
-ATNSimulator.prototype.getCachedContext = function(context) {
-    if (this.sharedContextCache ===null) {
+ATNSimulator.prototype.getCachedContext = function (context) {
+    if (this.sharedContextCache === null) {
         return context;
     }
     var visited = {};
-    return getCachedPredictionContext(context, this.sharedContextCache, visited);
+    return (0, _PredictionContext.getCachedPredictionContext)(context, this.sharedContextCache, visited);
 };

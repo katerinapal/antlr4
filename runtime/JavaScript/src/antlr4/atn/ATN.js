@@ -1,8 +1,15 @@
-import { Token } from "./../Token";
-import { IntervalSet } from "./../IntervalSet";
-import { LL1Analyzer } from "./../LL1Analyzer";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ATN = ATN;
 
-export function ATN(grammarType, maxTokenType) {
+var _Token = require("./../Token");
+
+var _IntervalSet = require("./../IntervalSet");
+
+var _LL1Analyzer = require("./../LL1Analyzer");
+
+function ATN(grammarType, maxTokenType) {
 
     // Used for runtime deserialization of ATNs from strings///
     // The type of the ATN.
@@ -37,16 +44,16 @@ export function ATN(grammarType, maxTokenType) {
 //  If {@code ctx} is null, the set of tokens will not include what can follow
 //  the rule surrounding {@code s}. In other words, the set will be
 //  restricted to tokens reachable staying within {@code s}'s rule.
-ATN.prototype.nextTokensInContext = function(s, ctx) {
-    var anal = new LL1Analyzer(this);
+ATN.prototype.nextTokensInContext = function (s, ctx) {
+    var anal = new _LL1Analyzer.LL1Analyzer(this);
     return anal.LOOK(s, null, ctx);
 };
 
 // Compute the set of valid tokens that can occur starting in {@code s} and
 // staying in same rule. {@link Token//EPSILON} is in set if we reach end of
 // rule.
-ATN.prototype.nextTokensNoContext = function(s) {
-    if (s.nextTokenWithinRule !== null ) {
+ATN.prototype.nextTokensNoContext = function (s) {
+    if (s.nextTokenWithinRule !== null) {
         return s.nextTokenWithinRule;
     }
     s.nextTokenWithinRule = this.nextTokensInContext(s, null);
@@ -54,62 +61,62 @@ ATN.prototype.nextTokensNoContext = function(s) {
     return s.nextTokenWithinRule;
 };
 
-ATN.prototype.nextTokens = function(s, ctx) {
-    if ( ctx===undefined ) {
+ATN.prototype.nextTokens = function (s, ctx) {
+    if (ctx === undefined) {
         return this.nextTokensNoContext(s);
     } else {
         return this.nextTokensInContext(s, ctx);
     }
 };
 
-ATN.prototype.addState = function( state) {
-    if ( state !== null ) {
+ATN.prototype.addState = function (state) {
+    if (state !== null) {
         state.atn = this;
         state.stateNumber = this.states.length;
     }
     this.states.push(state);
 };
 
-ATN.prototype.removeState = function( state) {
+ATN.prototype.removeState = function (state) {
     this.states[state.stateNumber] = null; // just free mem, don't shift states in list
 };
 
-ATN.prototype.defineDecisionState = function( s) {
+ATN.prototype.defineDecisionState = function (s) {
     this.decisionToState.push(s);
-    s.decision = this.decisionToState.length-1;
+    s.decision = this.decisionToState.length - 1;
     return s.decision;
 };
 
-ATN.prototype.getDecisionState = function( decision) {
-    if (this.decisionToState.length===0) {
+ATN.prototype.getDecisionState = function (decision) {
+    if (this.decisionToState.length === 0) {
         return null;
     } else {
         return this.decisionToState[decision];
     }
 };
 
-ATN.prototype.getExpectedTokens = function( stateNumber, ctx ) {
-    if ( stateNumber < 0 || stateNumber >= this.states.length ) {
-        throw("Invalid state number.");
+ATN.prototype.getExpectedTokens = function (stateNumber, ctx) {
+    if (stateNumber < 0 || stateNumber >= this.states.length) {
+        throw "Invalid state number.";
     }
     var s = this.states[stateNumber];
     var following = this.nextTokens(s);
-    if (!following.contains(Token.EPSILON)) {
+    if (!following.contains(_Token.Token.EPSILON)) {
         return following;
     }
-    var expected = new IntervalSet();
+    var expected = new _IntervalSet.IntervalSet();
     expected.addSet(following);
-    expected.removeOne(Token.EPSILON);
-    while (ctx !== null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
+    expected.removeOne(_Token.Token.EPSILON);
+    while (ctx !== null && ctx.invokingState >= 0 && following.contains(_Token.Token.EPSILON)) {
         var invokingState = this.states[ctx.invokingState];
         var rt = invokingState.transitions[0];
         following = this.nextTokens(rt.followState);
         expected.addSet(following);
-        expected.removeOne(Token.EPSILON);
+        expected.removeOne(_Token.Token.EPSILON);
         ctx = ctx.parentCtx;
     }
-    if (following.contains(Token.EPSILON)) {
-        expected.addOne(Token.EOF);
+    if (following.contains(_Token.Token.EPSILON)) {
+        expected.addOne(_Token.Token.EOF);
     }
     return expected;
 };

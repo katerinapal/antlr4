@@ -1,18 +1,25 @@
-import { LexerNoViableAltException } from "./error/Errors";
-import { RecognitionException } from "./error/Errors";
-import { CommonTokenFactory } from "./CommonTokenFactory";
-import { Recognizer } from "./Recognizer";
-import { Token } from "./Token";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.Lexer = Lexer;
+
+var _Errors = require("./error/Errors");
+
+var _CommonTokenFactory = require("./CommonTokenFactory");
+
+var _Recognizer = require("./Recognizer");
+
+var _Token = require("./Token");
 
 function TokenSource() {
 	return this;
 }
 
-export function Lexer(input) {
-	Recognizer.call(this);
+function Lexer(input) {
+	_Recognizer.Recognizer.call(this);
 	this._input = input;
-	this._factory = CommonTokenFactory.DEFAULT;
-	this._tokenFactorySourcePair = [ this, input ];
+	this._factory = _CommonTokenFactory.CommonTokenFactory.DEFAULT;
+	this._tokenFactorySourcePair = [this, input];
 
 	this._interp = null; // child classes must populate this
 
@@ -41,10 +48,10 @@ export function Lexer(input) {
 	this._hitEOF = false;
 
 	// The channel number for the current token///
-	this._channel = Token.DEFAULT_CHANNEL;
+	this._channel = _Token.Token.DEFAULT_CHANNEL;
 
 	// The token type for the current token///
-	this._type = Token.INVALID_TYPE;
+	this._type = _Token.Token.INVALID_TYPE;
 
 	this._modeStack = [];
 	this._mode = Lexer.DEFAULT_MODE;
@@ -57,26 +64,26 @@ export function Lexer(input) {
 	return this;
 }
 
-Lexer.prototype = Object.create(Recognizer.prototype);
+Lexer.prototype = Object.create(_Recognizer.Recognizer.prototype);
 Lexer.prototype.constructor = Lexer;
 
 Lexer.DEFAULT_MODE = 0;
 Lexer.MORE = -2;
 Lexer.SKIP = -3;
 
-Lexer.DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
-Lexer.HIDDEN = Token.HIDDEN_CHANNEL;
+Lexer.DEFAULT_TOKEN_CHANNEL = _Token.Token.DEFAULT_CHANNEL;
+Lexer.HIDDEN = _Token.Token.HIDDEN_CHANNEL;
 Lexer.MIN_CHAR_VALUE = 0x0000;
 Lexer.MAX_CHAR_VALUE = 0x10FFFF;
 
-Lexer.prototype.reset = function() {
+Lexer.prototype.reset = function () {
 	// wack Lexer state variables
 	if (this._input !== null) {
 		this._input.seek(0); // rewind the input
 	}
 	this._token = null;
-	this._type = Token.INVALID_TYPE;
-	this._channel = Token.DEFAULT_CHANNEL;
+	this._type = _Token.Token.INVALID_TYPE;
+	this._channel = _Token.Token.DEFAULT_CHANNEL;
 	this._tokenStartCharIndex = -1;
 	this._tokenStartColumn = -1;
 	this._tokenStartLine = -1;
@@ -90,7 +97,7 @@ Lexer.prototype.reset = function() {
 };
 
 // Return a token from this source; i.e., match a token on the char stream.
-Lexer.prototype.nextToken = function() {
+Lexer.prototype.nextToken = function () {
 	if (this._input === null) {
 		throw "nextToken requires a non-null input stream.";
 	}
@@ -105,30 +112,30 @@ Lexer.prototype.nextToken = function() {
 				return this._token;
 			}
 			this._token = null;
-			this._channel = Token.DEFAULT_CHANNEL;
+			this._channel = _Token.Token.DEFAULT_CHANNEL;
 			this._tokenStartCharIndex = this._input.index;
 			this._tokenStartColumn = this._interp.column;
 			this._tokenStartLine = this._interp.line;
 			this._text = null;
 			var continueOuter = false;
 			while (true) {
-				this._type = Token.INVALID_TYPE;
+				this._type = _Token.Token.INVALID_TYPE;
 				var ttype = Lexer.SKIP;
 				try {
 					ttype = this._interp.match(this._input, this._mode);
 				} catch (e) {
-				    if(e instanceof RecognitionException) {
-                        this.notifyListeners(e); // report error
-                        this.recover(e);
-                    } else {
-                        console.log(e.stack);
-                        throw e;
-                    }
+					if (e instanceof _Errors.RecognitionException) {
+						this.notifyListeners(e); // report error
+						this.recover(e);
+					} else {
+						console.log(e.stack);
+						throw e;
+					}
 				}
-				if (this._input.LA(1) === Token.EOF) {
+				if (this._input.LA(1) === _Token.Token.EOF) {
 					this._hitEOF = true;
 				}
-				if (this._type === Token.INVALID_TYPE) {
+				if (this._type === _Token.Token.INVALID_TYPE) {
 					this._type = ttype;
 				}
 				if (this._type === Lexer.SKIP) {
@@ -160,19 +167,19 @@ Lexer.prototype.nextToken = function() {
 // if token==null at end of any token rule, it creates one for you
 // and emits it.
 // /
-Lexer.prototype.skip = function() {
+Lexer.prototype.skip = function () {
 	this._type = Lexer.SKIP;
 };
 
-Lexer.prototype.more = function() {
+Lexer.prototype.more = function () {
 	this._type = Lexer.MORE;
 };
 
-Lexer.prototype.mode = function(m) {
+Lexer.prototype.mode = function (m) {
 	this._mode = m;
 };
 
-Lexer.prototype.pushMode = function(m) {
+Lexer.prototype.pushMode = function (m) {
 	if (this._interp.debug) {
 		console.log("pushMode " + m);
 	}
@@ -180,7 +187,7 @@ Lexer.prototype.pushMode = function(m) {
 	this.mode(m);
 };
 
-Lexer.prototype.popMode = function() {
+Lexer.prototype.popMode = function () {
 	if (this._modeStack.length === 0) {
 		throw "Empty Stack";
 	}
@@ -193,20 +200,20 @@ Lexer.prototype.popMode = function() {
 
 // Set the char stream and reset the lexer
 Object.defineProperty(Lexer.prototype, "inputStream", {
-	get : function() {
+	get: function get() {
 		return this._input;
 	},
-	set : function(input) {
+	set: function set(input) {
 		this._input = null;
-		this._tokenFactorySourcePair = [ this, this._input ];
+		this._tokenFactorySourcePair = [this, this._input];
 		this.reset();
 		this._input = input;
-		this._tokenFactorySourcePair = [ this, this._input ];
+		this._tokenFactorySourcePair = [this, this._input];
 	}
 });
 
 Object.defineProperty(Lexer.prototype, "sourceName", {
-	get : function sourceName() {
+	get: function sourceName() {
 		return this._input.sourceName;
 	}
 });
@@ -216,7 +223,7 @@ Object.defineProperty(Lexer.prototype, "sourceName", {
 // and getToken (to push tokens into a list and pull from that list
 // rather than a single variable as this implementation does).
 // /
-Lexer.prototype.emitToken = function(token) {
+Lexer.prototype.emitToken = function (token) {
 	this._token = token;
 };
 
@@ -226,96 +233,89 @@ Lexer.prototype.emitToken = function(token) {
 // use that to set the token's text. Override this method to emit
 // custom Token objects or provide a new factory.
 // /
-Lexer.prototype.emit = function() {
-	var t = this._factory.create(this._tokenFactorySourcePair, this._type,
-			this._text, this._channel, this._tokenStartCharIndex, this
-					.getCharIndex() - 1, this._tokenStartLine,
-			this._tokenStartColumn);
+Lexer.prototype.emit = function () {
+	var t = this._factory.create(this._tokenFactorySourcePair, this._type, this._text, this._channel, this._tokenStartCharIndex, this.getCharIndex() - 1, this._tokenStartLine, this._tokenStartColumn);
 	this.emitToken(t);
 	return t;
 };
 
-Lexer.prototype.emitEOF = function() {
+Lexer.prototype.emitEOF = function () {
 	var cpos = this.column;
 	var lpos = this.line;
-	var eof = this._factory.create(this._tokenFactorySourcePair, Token.EOF,
-			null, Token.DEFAULT_CHANNEL, this._input.index,
-			this._input.index - 1, lpos, cpos);
+	var eof = this._factory.create(this._tokenFactorySourcePair, _Token.Token.EOF, null, _Token.Token.DEFAULT_CHANNEL, this._input.index, this._input.index - 1, lpos, cpos);
 	this.emitToken(eof);
 	return eof;
 };
 
 Object.defineProperty(Lexer.prototype, "type", {
-	get : function() {
+	get: function get() {
 		return this.type;
 	},
-	set : function(type) {
+	set: function set(type) {
 		this._type = type;
 	}
 });
 
 Object.defineProperty(Lexer.prototype, "line", {
-	get : function() {
+	get: function get() {
 		return this._interp.line;
 	},
-	set : function(line) {
+	set: function set(line) {
 		this._interp.line = line;
 	}
 });
 
 Object.defineProperty(Lexer.prototype, "column", {
-	get : function() {
+	get: function get() {
 		return this._interp.column;
 	},
-	set : function(column) {
+	set: function set(column) {
 		this._interp.column = column;
 	}
 });
 
-
 // What is the index of the current character of lookahead?///
-Lexer.prototype.getCharIndex = function() {
+Lexer.prototype.getCharIndex = function () {
 	return this._input.index;
 };
 
 // Return the text matched so far for the current token or any text override.
 //Set the complete text of this token; it wipes any previous changes to the text.
 Object.defineProperty(Lexer.prototype, "text", {
-	get : function() {
+	get: function get() {
 		if (this._text !== null) {
 			return this._text;
 		} else {
 			return this._interp.getText(this._input);
 		}
 	},
-	set : function(text) {
+	set: function set(text) {
 		this._text = text;
 	}
 });
 // Return a list of all Token objects in input char stream.
 // Forces load of all tokens. Does not include EOF token.
 // /
-Lexer.prototype.getAllTokens = function() {
+Lexer.prototype.getAllTokens = function () {
 	var tokens = [];
 	var t = this.nextToken();
-	while (t.type !== Token.EOF) {
+	while (t.type !== _Token.Token.EOF) {
 		tokens.push(t);
 		t = this.nextToken();
 	}
 	return tokens;
 };
 
-Lexer.prototype.notifyListeners = function(e) {
+Lexer.prototype.notifyListeners = function (e) {
 	var start = this._tokenStartCharIndex;
 	var stop = this._input.index;
 	var text = this._input.getText(start, stop);
 	var msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
 	var listener = this.getErrorListenerDispatch();
-	listener.syntaxError(this, null, this._tokenStartLine,
-			this._tokenStartColumn, msg, e);
+	listener.syntaxError(this, null, this._tokenStartLine, this._tokenStartColumn, msg, e);
 };
 
-Lexer.prototype.getErrorDisplay = function(s) {
+Lexer.prototype.getErrorDisplay = function (s) {
 	var d = [];
 	for (var i = 0; i < s.length; i++) {
 		d.push(s[i]);
@@ -323,8 +323,8 @@ Lexer.prototype.getErrorDisplay = function(s) {
 	return d.join('');
 };
 
-Lexer.prototype.getErrorDisplayForChar = function(c) {
-	if (c.charCodeAt(0) === Token.EOF) {
+Lexer.prototype.getErrorDisplayForChar = function (c) {
+	if (c.charCodeAt(0) === _Token.Token.EOF) {
 		return "<EOF>";
 	} else if (c === '\n') {
 		return "\\n";
@@ -337,7 +337,7 @@ Lexer.prototype.getErrorDisplayForChar = function(c) {
 	}
 };
 
-Lexer.prototype.getCharErrorDisplay = function(c) {
+Lexer.prototype.getCharErrorDisplay = function (c) {
 	return "'" + this.getErrorDisplayForChar(c) + "'";
 };
 
@@ -346,9 +346,9 @@ Lexer.prototype.getCharErrorDisplay = function(c) {
 // it all works out. You can instead use the rule invocation stack
 // to do sophisticated error recovery if you are in a fragment rule.
 // /
-Lexer.prototype.recover = function(re) {
-	if (this._input.LA(1) !== Token.EOF) {
-		if (re instanceof LexerNoViableAltException) {
+Lexer.prototype.recover = function (re) {
+	if (this._input.LA(1) !== _Token.Token.EOF) {
+		if (re instanceof _Errors.LexerNoViableAltException) {
 			// skip a char and try again
 			this._interp.consume(this._input);
 		} else {

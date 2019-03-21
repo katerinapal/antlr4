@@ -1,17 +1,39 @@
-import * as Utils from "./../Utils";
-import { ATNConfigSet } from "./../atn/ATNConfigSet";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.PredPrediction = PredPrediction;
+exports.DFAState = DFAState;
+
+var _Utils = require("./../Utils");
+
+var Utils = _interopRequireWildcard(_Utils);
+
+var _ATNConfigSet = require("./../atn/ATNConfigSet");
+
+function _interopRequireWildcard(obj) {
+	if (obj && obj.__esModule) {
+		return obj;
+	} else {
+		var newObj = {};if (obj != null) {
+			for (var key in obj) {
+				if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+			}
+		}newObj.default = obj;return newObj;
+	}
+}
+
 var Hash = Utils.Hash;
 var Set = Utils.Set;
 
 // Map a predicate to a predicted alternative.///
 
-export function PredPrediction(pred, alt) {
+function PredPrediction(pred, alt) {
 	this.alt = alt;
 	this.pred = pred;
 	return this;
 }
 
-PredPrediction.prototype.toString = function() {
+PredPrediction.prototype.toString = function () {
 	return "(" + this.pred + ", " + this.alt + ")";
 };
 
@@ -40,12 +62,12 @@ PredPrediction.prototype.toString = function() {
 // meaning that state was reached via a different set of rule invocations.</p>
 // /
 
-export function DFAState(stateNumber, configs) {
+function DFAState(stateNumber, configs) {
 	if (stateNumber === null) {
 		stateNumber = -1;
 	}
 	if (configs === null) {
-		configs = new ATNConfigSet();
+		configs = new _ATNConfigSet.ATNConfigSet();
 	}
 	this.stateNumber = stateNumber;
 	this.configs = configs;
@@ -84,7 +106,7 @@ export function DFAState(stateNumber, configs) {
 
 // Get the set of all alts mentioned by all ATN configurations in this
 // DFA state.
-DFAState.prototype.getAltSet = function() {
+DFAState.prototype.getAltSet = function () {
 	var alts = new Set();
 	if (this.configs !== null) {
 		for (var i = 0; i < this.configs.length; i++) {
@@ -110,33 +132,25 @@ DFAState.prototype.getAltSet = function() {
 // {@link ParserATNSimulator//addDFAState} we need to know if any other state
 // exists that has this exact set of ATN configurations. The
 // {@link //stateNumber} is irrelevant.</p>
-DFAState.prototype.equals = function(other) {
+DFAState.prototype.equals = function (other) {
 	// compare set of ATN configurations in this set with other
-	return this === other ||
-			(other instanceof DFAState &&
-				this.configs.equals(other.configs));
+	return this === other || other instanceof DFAState && this.configs.equals(other.configs);
 };
 
-DFAState.prototype.toString = function() {
+DFAState.prototype.toString = function () {
 	var s = "" + this.stateNumber + ":" + this.configs;
-	if(this.isAcceptState) {
-        s = s + "=>";
-        if (this.predicates !== null)
-            s = s + this.predicates;
-        else
-            s = s + this.prediction;
-    }
+	if (this.isAcceptState) {
+		s = s + "=>";
+		if (this.predicates !== null) s = s + this.predicates;else s = s + this.prediction;
+	}
 	return s;
 };
 
-DFAState.prototype.hashCode = function() {
+DFAState.prototype.hashCode = function () {
 	var hash = new Hash();
 	hash.update(this.configs);
-	if(this.isAcceptState) {
-        if (this.predicates !== null)
-            hash.update(this.predicates);
-        else
-            hash.update(this.prediction);
-    }
-    return hash.finish();
+	if (this.isAcceptState) {
+		if (this.predicates !== null) hash.update(this.predicates);else hash.update(this.prediction);
+	}
+	return hash.finish();
 };

@@ -1,21 +1,22 @@
-import { BufferedTokenStream } from "./BufferedTokenStream";
-import { Token } from "./Token";
+var _BufferedTokenStream = require("./BufferedTokenStream");
+
+var _Token = require("./Token");
 
 function CommonTokenStream(lexer, channel) {
-	BufferedTokenStream.call(this, lexer);
-    this.channel = channel===undefined ? Token.DEFAULT_CHANNEL : channel;
+    _BufferedTokenStream.BufferedTokenStream.call(this, lexer);
+    this.channel = channel === undefined ? _Token.Token.DEFAULT_CHANNEL : channel;
     return this;
 }
 
-CommonTokenStream.prototype = Object.create(BufferedTokenStream.prototype);
+CommonTokenStream.prototype = Object.create(_BufferedTokenStream.BufferedTokenStream.prototype);
 CommonTokenStream.prototype.constructor = CommonTokenStream;
 
-CommonTokenStream.prototype.adjustSeekIndex = function(i) {
+CommonTokenStream.prototype.adjustSeekIndex = function (i) {
     return this.nextTokenOnChannel(i, this.channel);
 };
 
-CommonTokenStream.prototype.LB = function(k) {
-    if (k===0 || this.index-k<0) {
+CommonTokenStream.prototype.LB = function (k) {
+    if (k === 0 || this.index - k < 0) {
         return null;
     }
     var i = this.index;
@@ -32,7 +33,7 @@ CommonTokenStream.prototype.LB = function(k) {
     return this.tokens[i];
 };
 
-CommonTokenStream.prototype.LT = function(k) {
+CommonTokenStream.prototype.LT = function (k) {
     this.lazyInit();
     if (k === 0) {
         return null;
@@ -54,15 +55,15 @@ CommonTokenStream.prototype.LT = function(k) {
 };
 
 // Count EOF just once.///
-CommonTokenStream.prototype.getNumberOfOnChannelTokens = function() {
+CommonTokenStream.prototype.getNumberOfOnChannelTokens = function () {
     var n = 0;
     this.fill();
-    for (var i =0; i< this.tokens.length;i++) {
+    for (var i = 0; i < this.tokens.length; i++) {
         var t = this.tokens[i];
-        if( t.channel===this.channel) {
+        if (t.channel === this.channel) {
             n += 1;
         }
-        if( t.type===Token.EOF) {
+        if (t.type === _Token.Token.EOF) {
             break;
         }
     }

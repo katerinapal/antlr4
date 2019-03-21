@@ -1,8 +1,27 @@
-import * as Utils from "../Utils.js";
-import { Interval } from "./../IntervalSet";
-import { Token } from "./../Token";
-export var INVALID_INTERVAL = new Interval(-1, -2);
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.INVALID_INTERVAL = undefined;
+exports.RuleNode = RuleNode;
+exports.TerminalNode = TerminalNode;
+exports.ErrorNode = ErrorNode;
+exports.ParseTreeVisitor = ParseTreeVisitor;
+exports.ParseTreeListener = ParseTreeListener;
+exports.TerminalNodeImpl = TerminalNodeImpl;
+exports.ErrorNodeImpl = ErrorNodeImpl;
+exports.ParseTreeWalker = ParseTreeWalker;
 
+var _Utils = require("../Utils.js");
+
+var Utils = _interopRequireWildcard(_Utils);
+
+var _IntervalSet = require("./../IntervalSet");
+
+var _Token = require("./../Token");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var INVALID_INTERVAL = exports.INVALID_INTERVAL = new _IntervalSet.Interval(-1, -2);
 
 function Tree() {
 	return this;
@@ -24,7 +43,7 @@ function ParseTree() {
 ParseTree.prototype = Object.create(SyntaxTree.prototype);
 ParseTree.prototype.constructor = ParseTree;
 
-export function RuleNode() {
+function RuleNode() {
 	ParseTree.call(this);
 	return this;
 }
@@ -32,7 +51,7 @@ export function RuleNode() {
 RuleNode.prototype = Object.create(ParseTree.prototype);
 RuleNode.prototype.constructor = RuleNode;
 
-export function TerminalNode() {
+function TerminalNode() {
 	ParseTree.call(this);
 	return this;
 }
@@ -40,7 +59,7 @@ export function TerminalNode() {
 TerminalNode.prototype = Object.create(ParseTree.prototype);
 TerminalNode.prototype.constructor = TerminalNode;
 
-export function ErrorNode() {
+function ErrorNode() {
 	TerminalNode.call(this);
 	return this;
 }
@@ -48,52 +67,45 @@ export function ErrorNode() {
 ErrorNode.prototype = Object.create(TerminalNode.prototype);
 ErrorNode.prototype.constructor = ErrorNode;
 
-export function ParseTreeVisitor() {
+function ParseTreeVisitor() {
 	return this;
 }
 
-ParseTreeVisitor.prototype.visit = function(ctx) {
- 	if (Array.isArray(ctx)) {
-		return ctx.map(function(child) {
-            return child.accept(this);
-        }, this);
+ParseTreeVisitor.prototype.visit = function (ctx) {
+	if (Array.isArray(ctx)) {
+		return ctx.map(function (child) {
+			return child.accept(this);
+		}, this);
 	} else {
 		return ctx.accept(this);
 	}
 };
 
-ParseTreeVisitor.prototype.visitChildren = function(ctx) {
+ParseTreeVisitor.prototype.visitChildren = function (ctx) {
 	if (ctx.children) {
 		return this.visit(ctx.children);
 	} else {
 		return null;
 	}
-}
-
-ParseTreeVisitor.prototype.visitTerminal = function(node) {
 };
 
-ParseTreeVisitor.prototype.visitErrorNode = function(node) {
-};
+ParseTreeVisitor.prototype.visitTerminal = function (node) {};
 
+ParseTreeVisitor.prototype.visitErrorNode = function (node) {};
 
-export function ParseTreeListener() {
+function ParseTreeListener() {
 	return this;
 }
 
-ParseTreeListener.prototype.visitTerminal = function(node) {
-};
+ParseTreeListener.prototype.visitTerminal = function (node) {};
 
-ParseTreeListener.prototype.visitErrorNode = function(node) {
-};
+ParseTreeListener.prototype.visitErrorNode = function (node) {};
 
-ParseTreeListener.prototype.enterEveryRule = function(node) {
-};
+ParseTreeListener.prototype.enterEveryRule = function (node) {};
 
-ParseTreeListener.prototype.exitEveryRule = function(node) {
-};
+ParseTreeListener.prototype.exitEveryRule = function (node) {};
 
-export function TerminalNodeImpl(symbol) {
+function TerminalNodeImpl(symbol) {
 	TerminalNode.call(this);
 	this.parentCtx = null;
 	this.symbol = symbol;
@@ -103,44 +115,44 @@ export function TerminalNodeImpl(symbol) {
 TerminalNodeImpl.prototype = Object.create(TerminalNode.prototype);
 TerminalNodeImpl.prototype.constructor = TerminalNodeImpl;
 
-TerminalNodeImpl.prototype.getChild = function(i) {
+TerminalNodeImpl.prototype.getChild = function (i) {
 	return null;
 };
 
-TerminalNodeImpl.prototype.getSymbol = function() {
+TerminalNodeImpl.prototype.getSymbol = function () {
 	return this.symbol;
 };
 
-TerminalNodeImpl.prototype.getParent = function() {
+TerminalNodeImpl.prototype.getParent = function () {
 	return this.parentCtx;
 };
 
-TerminalNodeImpl.prototype.getPayload = function() {
+TerminalNodeImpl.prototype.getPayload = function () {
 	return this.symbol;
 };
 
-TerminalNodeImpl.prototype.getSourceInterval = function() {
+TerminalNodeImpl.prototype.getSourceInterval = function () {
 	if (this.symbol === null) {
 		return INVALID_INTERVAL;
 	}
 	var tokenIndex = this.symbol.tokenIndex;
-	return new Interval(tokenIndex, tokenIndex);
+	return new _IntervalSet.Interval(tokenIndex, tokenIndex);
 };
 
-TerminalNodeImpl.prototype.getChildCount = function() {
+TerminalNodeImpl.prototype.getChildCount = function () {
 	return 0;
 };
 
-TerminalNodeImpl.prototype.accept = function(visitor) {
+TerminalNodeImpl.prototype.accept = function (visitor) {
 	return visitor.visitTerminal(this);
 };
 
-TerminalNodeImpl.prototype.getText = function() {
+TerminalNodeImpl.prototype.getText = function () {
 	return this.symbol.text;
 };
 
-TerminalNodeImpl.prototype.toString = function() {
-	if (this.symbol.type === Token.EOF) {
+TerminalNodeImpl.prototype.toString = function () {
+	if (this.symbol.type === _Token.Token.EOF) {
 		return "<EOF>";
 	} else {
 		return this.symbol.text;
@@ -153,7 +165,7 @@ TerminalNodeImpl.prototype.toString = function() {
 // and deletion as well as during "consume until error recovery set"
 // upon no viable alternative exceptions.
 
-export function ErrorNodeImpl(token) {
+function ErrorNodeImpl(token) {
 	TerminalNodeImpl.call(this, token);
 	return this;
 }
@@ -161,21 +173,20 @@ export function ErrorNodeImpl(token) {
 ErrorNodeImpl.prototype = Object.create(TerminalNodeImpl.prototype);
 ErrorNodeImpl.prototype.constructor = ErrorNodeImpl;
 
-ErrorNodeImpl.prototype.isErrorNode = function() {
+ErrorNodeImpl.prototype.isErrorNode = function () {
 	return true;
 };
 
-ErrorNodeImpl.prototype.accept = function(visitor) {
+ErrorNodeImpl.prototype.accept = function (visitor) {
 	return visitor.visitErrorNode(this);
 };
 
-export function ParseTreeWalker() {
+function ParseTreeWalker() {
 	return this;
 }
 
-ParseTreeWalker.prototype.walk = function(listener, t) {
-	var errorNode = t instanceof ErrorNode ||
-			(t.isErrorNode !== undefined && t.isErrorNode());
+ParseTreeWalker.prototype.walk = function (listener, t) {
+	var errorNode = t instanceof ErrorNode || t.isErrorNode !== undefined && t.isErrorNode();
 	if (errorNode) {
 		listener.visitErrorNode(t);
 	} else if (t instanceof TerminalNode) {
@@ -195,13 +206,13 @@ ParseTreeWalker.prototype.walk = function(listener, t) {
 // {@link RuleContext}-specific event. First we trigger the generic and then
 // the rule specific. We to them in reverse order upon finishing the node.
 //
-ParseTreeWalker.prototype.enterRule = function(listener, r) {
+ParseTreeWalker.prototype.enterRule = function (listener, r) {
 	var ctx = r.getRuleContext();
 	listener.enterEveryRule(ctx);
 	ctx.enterRule(listener);
 };
 
-ParseTreeWalker.prototype.exitRule = function(listener, r) {
+ParseTreeWalker.prototype.exitRule = function (listener, r) {
 	var ctx = r.getRuleContext();
 	ctx.exitRule(listener);
 	listener.exitEveryRule(ctx);

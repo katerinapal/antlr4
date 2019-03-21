@@ -1,13 +1,20 @@
-import { Interval } from "./IntervalSet";
-import { Lexer } from "./Lexer";
-import { Token } from "./Token";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.BufferedTokenStream = BufferedTokenStream;
+
+var _IntervalSet = require("./IntervalSet");
+
+var _Lexer = require("./Lexer");
+
+var _Token = require("./Token");
 
 // this is just to keep meaningful parameter types to Parser
 function TokenStream() {
 	return this;
 }
 
-export function BufferedTokenStream(tokenSource) {
+function BufferedTokenStream(tokenSource) {
 
 	TokenStream.call(this);
 	// The {@link TokenSource} from which tokens for this stream are fetched.
@@ -51,29 +58,29 @@ export function BufferedTokenStream(tokenSource) {
 BufferedTokenStream.prototype = Object.create(TokenStream.prototype);
 BufferedTokenStream.prototype.constructor = BufferedTokenStream;
 
-BufferedTokenStream.prototype.mark = function() {
+BufferedTokenStream.prototype.mark = function () {
 	return 0;
 };
 
-BufferedTokenStream.prototype.release = function(marker) {
+BufferedTokenStream.prototype.release = function (marker) {
 	// no resources to release
 };
 
-BufferedTokenStream.prototype.reset = function() {
+BufferedTokenStream.prototype.reset = function () {
 	this.seek(0);
 };
 
-BufferedTokenStream.prototype.seek = function(index) {
+BufferedTokenStream.prototype.seek = function (index) {
 	this.lazyInit();
 	this.index = this.adjustSeekIndex(index);
 };
 
-BufferedTokenStream.prototype.get = function(index) {
+BufferedTokenStream.prototype.get = function (index) {
 	this.lazyInit();
 	return this.tokens[index];
 };
 
-BufferedTokenStream.prototype.consume = function() {
+BufferedTokenStream.prototype.consume = function () {
 	var skipEofCheck = false;
 	if (this.index >= 0) {
 		if (this.fetchedEOF) {
@@ -88,7 +95,7 @@ BufferedTokenStream.prototype.consume = function() {
 		// not yet initialized
 		skipEofCheck = false;
 	}
-	if (!skipEofCheck && this.LA(1) === Token.EOF) {
+	if (!skipEofCheck && this.LA(1) === _Token.Token.EOF) {
 		throw "cannot consume EOF";
 	}
 	if (this.sync(this.index + 1)) {
@@ -102,7 +109,7 @@ BufferedTokenStream.prototype.consume = function() {
 // {@code false}.
 // @see //get(int i)
 // /
-BufferedTokenStream.prototype.sync = function(i) {
+BufferedTokenStream.prototype.sync = function (i) {
 	var n = i - this.tokens.length + 1; // how many more elements we need?
 	if (n > 0) {
 		var fetched = this.fetch(n);
@@ -115,7 +122,7 @@ BufferedTokenStream.prototype.sync = function(i) {
 //
 // @return The actual number of elements added to the buffer.
 // /
-BufferedTokenStream.prototype.fetch = function(n) {
+BufferedTokenStream.prototype.fetch = function (n) {
 	if (this.fetchedEOF) {
 		return 0;
 	}
@@ -123,7 +130,7 @@ BufferedTokenStream.prototype.fetch = function(n) {
 		var t = this.tokenSource.nextToken();
 		t.tokenIndex = this.tokens.length;
 		this.tokens.push(t);
-		if (t.type === Token.EOF) {
+		if (t.type === _Token.Token.EOF) {
 			this.fetchedEOF = true;
 			return i + 1;
 		}
@@ -132,7 +139,7 @@ BufferedTokenStream.prototype.fetch = function(n) {
 };
 
 // Get all tokens from start..stop inclusively///
-BufferedTokenStream.prototype.getTokens = function(start, stop, types) {
+BufferedTokenStream.prototype.getTokens = function (start, stop, types) {
 	if (types === undefined) {
 		types = null;
 	}
@@ -146,7 +153,7 @@ BufferedTokenStream.prototype.getTokens = function(start, stop, types) {
 	}
 	for (var i = start; i < stop; i++) {
 		var t = this.tokens[i];
-		if (t.type === Token.EOF) {
+		if (t.type === _Token.Token.EOF) {
 			break;
 		}
 		if (types === null || types.contains(t.type)) {
@@ -156,18 +163,18 @@ BufferedTokenStream.prototype.getTokens = function(start, stop, types) {
 	return subset;
 };
 
-BufferedTokenStream.prototype.LA = function(i) {
+BufferedTokenStream.prototype.LA = function (i) {
 	return this.LT(i).type;
 };
 
-BufferedTokenStream.prototype.LB = function(k) {
+BufferedTokenStream.prototype.LB = function (k) {
 	if (this.index - k < 0) {
 		return null;
 	}
 	return this.tokens[this.index - k];
 };
 
-BufferedTokenStream.prototype.LT = function(k) {
+BufferedTokenStream.prototype.LT = function (k) {
 	this.lazyInit();
 	if (k === 0) {
 		return null;
@@ -177,7 +184,8 @@ BufferedTokenStream.prototype.LT = function(k) {
 	}
 	var i = this.index + k - 1;
 	this.sync(i);
-	if (i >= this.tokens.length) { // return EOF token
+	if (i >= this.tokens.length) {
+		// return EOF token
 		// EOF must be last token
 		return this.tokens[this.tokens.length - 1];
 	}
@@ -197,42 +205,41 @@ BufferedTokenStream.prototype.LT = function(k) {
 // @param i The target token index.
 // @return The adjusted target token index.
 
-BufferedTokenStream.prototype.adjustSeekIndex = function(i) {
+BufferedTokenStream.prototype.adjustSeekIndex = function (i) {
 	return i;
 };
 
-BufferedTokenStream.prototype.lazyInit = function() {
+BufferedTokenStream.prototype.lazyInit = function () {
 	if (this.index === -1) {
 		this.setup();
 	}
 };
 
-BufferedTokenStream.prototype.setup = function() {
+BufferedTokenStream.prototype.setup = function () {
 	this.sync(0);
 	this.index = this.adjustSeekIndex(0);
 };
 
 // Reset this token stream by setting its token source.///
-BufferedTokenStream.prototype.setTokenSource = function(tokenSource) {
+BufferedTokenStream.prototype.setTokenSource = function (tokenSource) {
 	this.tokenSource = tokenSource;
 	this.tokens = [];
 	this.index = -1;
 	this.fetchedEOF = false;
 };
 
-
 // Given a starting index, return the index of the next token on channel.
 // Return i if tokens[i] is on channel. Return -1 if there are no tokens
 // on channel between i and EOF.
 // /
-BufferedTokenStream.prototype.nextTokenOnChannel = function(i, channel) {
+BufferedTokenStream.prototype.nextTokenOnChannel = function (i, channel) {
 	this.sync(i);
 	if (i >= this.tokens.length) {
 		return -1;
 	}
 	var token = this.tokens[i];
 	while (token.channel !== this.channel) {
-		if (token.type === Token.EOF) {
+		if (token.type === _Token.Token.EOF) {
 			return -1;
 		}
 		i += 1;
@@ -245,7 +252,7 @@ BufferedTokenStream.prototype.nextTokenOnChannel = function(i, channel) {
 // Given a starting index, return the index of the previous token on channel.
 // Return i if tokens[i] is on channel. Return -1 if there are no tokens
 // on channel between i and 0.
-BufferedTokenStream.prototype.previousTokenOnChannel = function(i, channel) {
+BufferedTokenStream.prototype.previousTokenOnChannel = function (i, channel) {
 	while (i >= 0 && this.tokens[i].channel !== channel) {
 		i -= 1;
 	}
@@ -255,8 +262,7 @@ BufferedTokenStream.prototype.previousTokenOnChannel = function(i, channel) {
 // Collect all tokens on specified channel to the right of
 // the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
 // EOF. If channel is -1, find any non default channel token.
-BufferedTokenStream.prototype.getHiddenTokensToRight = function(tokenIndex,
-		channel) {
+BufferedTokenStream.prototype.getHiddenTokensToRight = function (tokenIndex, channel) {
 	if (channel === undefined) {
 		channel = -1;
 	}
@@ -264,7 +270,7 @@ BufferedTokenStream.prototype.getHiddenTokensToRight = function(tokenIndex,
 	if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
 		throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
 	}
-	var nextOnChannel = this.nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+	var nextOnChannel = this.nextTokenOnChannel(tokenIndex + 1, _Lexer.Lexer.DEFAULT_TOKEN_CHANNEL);
 	var from_ = tokenIndex + 1;
 	// if none onchannel to right, nextOnChannel=-1 so set to = last token
 	var to = nextOnChannel === -1 ? this.tokens.length - 1 : nextOnChannel;
@@ -274,8 +280,7 @@ BufferedTokenStream.prototype.getHiddenTokensToRight = function(tokenIndex,
 // Collect all tokens on specified channel to the left of
 // the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
 // If channel is -1, find any non default channel token.
-BufferedTokenStream.prototype.getHiddenTokensToLeft = function(tokenIndex,
-		channel) {
+BufferedTokenStream.prototype.getHiddenTokensToLeft = function (tokenIndex, channel) {
 	if (channel === undefined) {
 		channel = -1;
 	}
@@ -283,7 +288,7 @@ BufferedTokenStream.prototype.getHiddenTokensToLeft = function(tokenIndex,
 	if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
 		throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
 	}
-	var prevOnChannel = this.previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+	var prevOnChannel = this.previousTokenOnChannel(tokenIndex - 1, _Lexer.Lexer.DEFAULT_TOKEN_CHANNEL);
 	if (prevOnChannel === tokenIndex - 1) {
 		return null;
 	}
@@ -293,12 +298,12 @@ BufferedTokenStream.prototype.getHiddenTokensToLeft = function(tokenIndex,
 	return this.filterForChannel(from_, to, channel);
 };
 
-BufferedTokenStream.prototype.filterForChannel = function(left, right, channel) {
+BufferedTokenStream.prototype.filterForChannel = function (left, right, channel) {
 	var hidden = [];
 	for (var i = left; i < right + 1; i++) {
 		var t = this.tokens[i];
 		if (channel === -1) {
-			if (t.channel !== Lexer.DEFAULT_TOKEN_CHANNEL) {
+			if (t.channel !== _Lexer.Lexer.DEFAULT_TOKEN_CHANNEL) {
 				hidden.push(t);
 			}
 		} else if (t.channel === channel) {
@@ -311,23 +316,23 @@ BufferedTokenStream.prototype.filterForChannel = function(left, right, channel) 
 	return hidden;
 };
 
-BufferedTokenStream.prototype.getSourceName = function() {
+BufferedTokenStream.prototype.getSourceName = function () {
 	return this.tokenSource.getSourceName();
 };
 
 // Get the text of all tokens in this buffer.///
-BufferedTokenStream.prototype.getText = function(interval) {
+BufferedTokenStream.prototype.getText = function (interval) {
 	this.lazyInit();
 	this.fill();
 	if (interval === undefined || interval === null) {
-		interval = new Interval(0, this.tokens.length - 1);
+		interval = new _IntervalSet.Interval(0, this.tokens.length - 1);
 	}
 	var start = interval.start;
-	if (start instanceof Token) {
+	if (start instanceof _Token.Token) {
 		start = start.tokenIndex;
 	}
 	var stop = interval.stop;
-	if (stop instanceof Token) {
+	if (stop instanceof _Token.Token) {
 		stop = stop.tokenIndex;
 	}
 	if (start === null || stop === null || start < 0 || stop < 0) {
@@ -339,7 +344,7 @@ BufferedTokenStream.prototype.getText = function(interval) {
 	var s = "";
 	for (var i = start; i < stop + 1; i++) {
 		var t = this.tokens[i];
-		if (t.type === Token.EOF) {
+		if (t.type === _Token.Token.EOF) {
 			break;
 		}
 		s = s + t.text;
@@ -348,7 +353,7 @@ BufferedTokenStream.prototype.getText = function(interval) {
 };
 
 // Get all tokens from lexer until EOF///
-BufferedTokenStream.prototype.fill = function() {
+BufferedTokenStream.prototype.fill = function () {
 	this.lazyInit();
 	while (this.fetch(1000) === 1000) {
 		continue;

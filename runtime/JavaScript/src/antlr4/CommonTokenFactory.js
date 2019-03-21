@@ -1,11 +1,16 @@
-import { CommonToken } from "./Token";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.CommonTokenFactory = CommonTokenFactory;
+
+var _Token = require("./Token");
 
 function TokenFactory() {
-	return this;
+    return this;
 }
 
-export function CommonTokenFactory(copyText) {
-	TokenFactory.call(this);
+function CommonTokenFactory(copyText) {
+    TokenFactory.call(this);
     // Indicates whether {@link CommonToken//setText} should be called after
     // constructing tokens to explicitly set the text. This is useful for cases
     // where the input stream might not be able to provide arbitrary substrings
@@ -20,8 +25,8 @@ export function CommonTokenFactory(copyText) {
     // The default value is {@code false} to avoid the performance and memory
     // overhead of copying text for every token unless explicitly requested.</p>
     //
-    this.copyText = copyText===undefined ? false : copyText;
-	return this;
+    this.copyText = copyText === undefined ? false : copyText;
+    return this;
 }
 
 CommonTokenFactory.prototype = Object.create(TokenFactory.prototype);
@@ -36,20 +41,20 @@ CommonTokenFactory.prototype.constructor = CommonTokenFactory;
 //
 CommonTokenFactory.DEFAULT = new CommonTokenFactory();
 
-CommonTokenFactory.prototype.create = function(source, type, text, channel, start, stop, line, column) {
-    var t = new CommonToken(source, type, channel, start, stop);
+CommonTokenFactory.prototype.create = function (source, type, text, channel, start, stop, line, column) {
+    var t = new _Token.CommonToken(source, type, channel, start, stop);
     t.line = line;
     t.column = column;
-    if (text !==null) {
+    if (text !== null) {
         t.text = text;
-    } else if (this.copyText && source[1] !==null) {
-        t.text = source[1].getText(start,stop);
+    } else if (this.copyText && source[1] !== null) {
+        t.text = source[1].getText(start, stop);
     }
     return t;
 };
 
-CommonTokenFactory.prototype.createThin = function(type, text) {
-    var t = new CommonToken(null, type);
+CommonTokenFactory.prototype.createThin = function (type, text) {
+    var t = new _Token.CommonToken(null, type);
     t.text = text;
     return t;
 };

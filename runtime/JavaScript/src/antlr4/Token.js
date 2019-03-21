@@ -1,3 +1,8 @@
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.Token = Token;
+exports.CommonToken = CommonToken;
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -8,7 +13,7 @@
 // (so we can ignore tabs), token channel, index, and source from which
 // we obtained this token.
 
-export function Token() {
+function Token() {
 	this.source = null;
 	this.type = null; // token type of the token
 	this.channel = null; // The parser ignores everything not on DEFAULT_CHANNEL
@@ -51,23 +56,23 @@ Token.HIDDEN_CHANNEL = 1;
 // of the token.
 
 Object.defineProperty(Token.prototype, "text", {
-	get : function() {
+	get: function get() {
 		return this._text;
 	},
-	set : function(text) {
+	set: function set(text) {
 		this._text = text;
 	}
 });
 
-Token.prototype.getTokenSource = function() {
+Token.prototype.getTokenSource = function () {
 	return this.source[0];
 };
 
-Token.prototype.getInputStream = function() {
+Token.prototype.getInputStream = function () {
 	return this.source[1];
 };
 
-export function CommonToken(source, type, channel, start, stop) {
+function CommonToken(source, type, channel, start, stop) {
 	Token.call(this);
 	this.source = source !== undefined ? source : CommonToken.EMPTY_SOURCE;
 	this.type = type !== undefined ? type : null;
@@ -89,7 +94,7 @@ CommonToken.prototype.constructor = CommonToken;
 
 // An empty {@link Pair} which is used as the default value of
 // {@link //source} for tokens that do not have a source.
-CommonToken.EMPTY_SOURCE = [ null, null ];
+CommonToken.EMPTY_SOURCE = [null, null];
 
 // Constructs a new {@link CommonToken} as a copy of another {@link Token}.
 //
@@ -103,9 +108,8 @@ CommonToken.EMPTY_SOURCE = [ null, null ];
 //
 // @param oldToken The token to copy.
 //
-CommonToken.prototype.clone = function() {
-	var t = new CommonToken(this.source, this.type, this.channel, this.start,
-			this.stop);
+CommonToken.prototype.clone = function () {
+	var t = new CommonToken(this.source, this.type, this.channel, this.start, this.stop);
 	t.tokenIndex = this.tokenIndex;
 	t.line = this.line;
 	t.column = this.column;
@@ -114,7 +118,7 @@ CommonToken.prototype.clone = function() {
 };
 
 Object.defineProperty(CommonToken.prototype, "text", {
-	get : function() {
+	get: function get() {
 		if (this._text !== null) {
 			return this._text;
 		}
@@ -129,20 +133,17 @@ Object.defineProperty(CommonToken.prototype, "text", {
 			return "<EOF>";
 		}
 	},
-	set : function(text) {
+	set: function set(text) {
 		this._text = text;
 	}
 });
 
-CommonToken.prototype.toString = function() {
+CommonToken.prototype.toString = function () {
 	var txt = this.text;
 	if (txt !== null) {
 		txt = txt.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");
 	} else {
 		txt = "<no text>";
 	}
-	return "[@" + this.tokenIndex + "," + this.start + ":" + this.stop + "='" +
-			txt + "',<" + this.type + ">" +
-			(this.channel > 0 ? ",channel=" + this.channel : "") + "," +
-			this.line + ":" + this.column + "]";
+	return "[@" + this.tokenIndex + "," + this.start + ":" + this.stop + "='" + txt + "',<" + this.type + ">" + (this.channel > 0 ? ",channel=" + this.channel : "") + "," + this.line + ":" + this.column + "]";
 };

@@ -1,16 +1,42 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.arrayToString = arrayToString;
+exports.Set = Set;
+exports.BitSet = BitSet;
+exports.Map = Map;
+exports.AltDict = AltDict;
+exports.DoubleDict = DoubleDict;
+exports.Hash = Hash;
+exports.hashStuff = hashStuff;
+exports.escapeWhitespace = escapeWhitespace;
+exports.titleCase = titleCase;
+exports.equalArrays = equalArrays;
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function arrayToString(a) {
+function arrayToString(a) {
     return "[" + a.join(", ") + "]";
 }
 
 String.prototype.seed = String.prototype.seed || Math.round(Math.random() * Math.pow(2, 32));
 
 String.prototype.hashCode = function () {
-    var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i,
+    var remainder,
+        bytes,
+        h1,
+        h1b,
+        c1,
+        c1b,
+        c2,
+        c2b,
+        k1,
+        i,
         key = this.toString();
 
     remainder = key.length & 3; // key.length % 4
@@ -21,21 +47,17 @@ String.prototype.hashCode = function () {
     i = 0;
 
     while (i < bytes) {
-        k1 =
-            ((key.charCodeAt(i) & 0xff)) |
-            ((key.charCodeAt(++i) & 0xff) << 8) |
-            ((key.charCodeAt(++i) & 0xff) << 16) |
-            ((key.charCodeAt(++i) & 0xff) << 24);
+        k1 = key.charCodeAt(i) & 0xff | (key.charCodeAt(++i) & 0xff) << 8 | (key.charCodeAt(++i) & 0xff) << 16 | (key.charCodeAt(++i) & 0xff) << 24;
         ++i;
 
-        k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
-        k1 = (k1 << 15) | (k1 >>> 17);
-        k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+        k1 = (k1 & 0xffff) * c1 + (((k1 >>> 16) * c1 & 0xffff) << 16) & 0xffffffff;
+        k1 = k1 << 15 | k1 >>> 17;
+        k1 = (k1 & 0xffff) * c2 + (((k1 >>> 16) * c2 & 0xffff) << 16) & 0xffffffff;
 
         h1 ^= k1;
-        h1 = (h1 << 13) | (h1 >>> 19);
-        h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-        h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+        h1 = h1 << 13 | h1 >>> 19;
+        h1b = (h1 & 0xffff) * 5 + (((h1 >>> 16) * 5 & 0xffff) << 16) & 0xffffffff;
+        h1 = (h1b & 0xffff) + 0x6b64 + (((h1b >>> 16) + 0xe654 & 0xffff) << 16);
     }
 
     k1 = 0;
@@ -46,20 +68,20 @@ String.prototype.hashCode = function () {
         case 2:
             k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
         case 1:
-            k1 ^= (key.charCodeAt(i) & 0xff);
+            k1 ^= key.charCodeAt(i) & 0xff;
 
-            k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
-            k1 = (k1 << 15) | (k1 >>> 17);
-            k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+            k1 = (k1 & 0xffff) * c1 + (((k1 >>> 16) * c1 & 0xffff) << 16) & 0xffffffff;
+            k1 = k1 << 15 | k1 >>> 17;
+            k1 = (k1 & 0xffff) * c2 + (((k1 >>> 16) * c2 & 0xffff) << 16) & 0xffffffff;
             h1 ^= k1;
     }
 
     h1 ^= key.length;
 
     h1 ^= h1 >>> 16;
-    h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+    h1 = (h1 & 0xffff) * 0x85ebca6b + (((h1 >>> 16) * 0x85ebca6b & 0xffff) << 16) & 0xffffffff;
     h1 ^= h1 >>> 13;
-    h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+    h1 = (h1 & 0xffff) * 0xc2b2ae35 + (((h1 >>> 16) * 0xc2b2ae35 & 0xffff) << 16) & 0xffffffff;
     h1 ^= h1 >>> 16;
 
     return h1 >>> 0;
@@ -73,7 +95,7 @@ function standardHashCodeFunction(a) {
     return a.hashCode();
 }
 
-export function Set(hashFunction, equalsFunction) {
+function Set(hashFunction, equalsFunction) {
     this.data = {};
     this.hashFunction = hashFunction || standardHashCodeFunction;
     this.equalsFunction = equalsFunction || standardEqualsFunction;
@@ -81,7 +103,7 @@ export function Set(hashFunction, equalsFunction) {
 }
 
 Object.defineProperty(Set.prototype, "length", {
-    get: function () {
+    get: function get() {
         var l = 0;
         for (var key in this.data) {
             if (key.indexOf("hash_") === 0) {
@@ -142,7 +164,7 @@ Set.prototype.toString = function () {
     return arrayToString(this.values());
 };
 
-export function BitSet() {
+function BitSet() {
     this.data = [];
     return this;
 }
@@ -188,7 +210,7 @@ BitSet.prototype.equals = function (other) {
 };
 
 Object.defineProperty(BitSet.prototype, "length", {
-    get: function () {
+    get: function get() {
         return this.values().length;
     }
 });
@@ -197,7 +219,7 @@ BitSet.prototype.toString = function () {
     return "{" + this.values().join(", ") + "}";
 };
 
-export function Map(hashFunction, equalsFunction) {
+function Map(hashFunction, equalsFunction) {
     this.data = {};
     this.hashFunction = hashFunction || standardHashCodeFunction;
     this.equalsFunction = equalsFunction || standardEqualsFunction;
@@ -205,7 +227,7 @@ export function Map(hashFunction, equalsFunction) {
 }
 
 Object.defineProperty(Map.prototype, "length", {
-    get: function () {
+    get: function get() {
         var l = 0;
         for (var hashKey in this.data) {
             if (hashKey.indexOf("hash_") === 0) {
@@ -228,22 +250,21 @@ Map.prototype.put = function (key, value) {
                 return oldValue;
             }
         }
-        entries.push({key:key, value:value});
+        entries.push({ key: key, value: value });
         return value;
     } else {
-        this.data[hashKey] = [{key:key, value:value}];
+        this.data[hashKey] = [{ key: key, value: value }];
         return value;
     }
 };
 
 Map.prototype.containsKey = function (key) {
     var hashKey = "hash_" + this.hashFunction(key);
-    if(hashKey in this.data) {
+    if (hashKey in this.data) {
         var entries = this.data[hashKey];
         for (var i = 0; i < entries.length; i++) {
             var entry = entries[i];
-            if (this.equalsFunction(key, entry.key))
-                return true;
+            if (this.equalsFunction(key, entry.key)) return true;
         }
     }
     return false;
@@ -251,12 +272,11 @@ Map.prototype.containsKey = function (key) {
 
 Map.prototype.get = function (key) {
     var hashKey = "hash_" + this.hashFunction(key);
-    if(hashKey in this.data) {
+    if (hashKey in this.data) {
         var entries = this.data[hashKey];
         for (var i = 0; i < entries.length; i++) {
             var entry = entries[i];
-            if (this.equalsFunction(key, entry.key))
-                return entry.value;
+            if (this.equalsFunction(key, entry.key)) return entry.value;
         }
     }
     return null;
@@ -272,34 +292,29 @@ Map.prototype.entries = function () {
     return l;
 };
 
-
 Map.prototype.getKeys = function () {
-    return this.entries().map(function(e) {
+    return this.entries().map(function (e) {
         return e.key;
     });
 };
 
-
 Map.prototype.getValues = function () {
-    return this.entries().map(function(e) {
-            return e.value;
+    return this.entries().map(function (e) {
+        return e.value;
     });
 };
 
-
 Map.prototype.toString = function () {
-    var ss = this.entries().map(function(entry) {
+    var ss = this.entries().map(function (entry) {
         return '{' + entry.key + ':' + entry.value + '}';
     });
     return '[' + ss.join(", ") + ']';
 };
 
-
-export function AltDict() {
+function AltDict() {
     this.data = {};
     return this;
 }
-
 
 AltDict.prototype.get = function (key) {
     key = "k-" + key;
@@ -323,26 +338,23 @@ AltDict.prototype.values = function () {
     });
 };
 
-export function DoubleDict() {
+function DoubleDict() {
     return this;
 }
 
-export function Hash() {
+function Hash() {
     this.count = 0;
     this.hash = 0;
     return this;
 }
 
 Hash.prototype.update = function () {
-    for(var i=0;i<arguments.length;i++) {
+    for (var i = 0; i < arguments.length; i++) {
         var value = arguments[i];
-        if (value == null)
-            continue;
-        if(Array.isArray(value))
-            this.update.apply(value);
-        else {
+        if (value == null) continue;
+        if (Array.isArray(value)) this.update.apply(value);else {
             var k = 0;
-            switch (typeof(value)) {
+            switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
                 case 'undefined':
                 case 'function':
                     continue;
@@ -358,28 +370,28 @@ Hash.prototype.update = function () {
                     continue;
             }
             k = k * 0xCC9E2D51;
-            k = (k << 15) | (k >>> (32 - 15));
+            k = k << 15 | k >>> 32 - 15;
             k = k * 0x1B873593;
             this.count = this.count + 1;
             var hash = this.hash ^ k;
-            hash = (hash << 13) | (hash >>> (32 - 13));
+            hash = hash << 13 | hash >>> 32 - 13;
             hash = hash * 5 + 0xE6546B64;
             this.hash = hash;
         }
     }
-}
+};
 
 Hash.prototype.finish = function () {
-    var hash = this.hash ^ (this.count * 4);
-    hash = hash ^ (hash >>> 16);
+    var hash = this.hash ^ this.count * 4;
+    hash = hash ^ hash >>> 16;
     hash = hash * 0x85EBCA6B;
-    hash = hash ^ (hash >>> 13);
+    hash = hash ^ hash >>> 13;
     hash = hash * 0xC2B2AE35;
-    hash = hash ^ (hash >>> 16);
+    hash = hash ^ hash >>> 16;
     return hash;
-}
+};
 
-export function hashStuff() {
+function hashStuff() {
     var hash = new Hash();
     hash.update.apply(arguments);
     return hash.finish();
@@ -387,7 +399,7 @@ export function hashStuff() {
 
 DoubleDict.prototype.get = function (a, b) {
     var d = this[a] || null;
-    return d === null ? null : (d[b] || null);
+    return d === null ? null : d[b] || null;
 };
 
 DoubleDict.prototype.set = function (a, b, o) {
@@ -399,35 +411,27 @@ DoubleDict.prototype.set = function (a, b, o) {
     d[b] = o;
 };
 
-
-export function escapeWhitespace(s, escapeSpaces) {
-    s = s.replace(/\t/g, "\\t")
-         .replace(/\n/g, "\\n")
-         .replace(/\r/g, "\\r");
+function escapeWhitespace(s, escapeSpaces) {
+    s = s.replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\r/g, "\\r");
     if (escapeSpaces) {
-        s = s.replace(/ /g, "\u00B7");
+        s = s.replace(/ /g, "\xB7");
     }
     return s;
 }
 
-export function titleCase(str) {
+function titleCase(str) {
     return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1);
     });
 }
 
-export function equalArrays(a, b) {
-    if (!Array.isArray(a) || !Array.isArray(b))
-        return false;
-    if (a == b)
-        return true;
-    if (a.length != b.length)
-        return false;
+function equalArrays(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a == b) return true;
+    if (a.length != b.length) return false;
     for (var i = 0; i < a.length; i++) {
-        if (a[i] == b[i])
-            continue;
-        if (!a[i].equals(b[i]))
-            return false;
+        if (a[i] == b[i]) continue;
+        if (!a[i].equals(b[i])) return false;
     }
     return true;
 }

@@ -1,10 +1,20 @@
-import * as INVALID_ALT_NUMBER from "./atn/ATN";
-import { INVALID_INTERVAL } from "./tree/Tree";
-import { Trees } from "./tree/Trees";
-import { RuleNode } from "./tree/Tree";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.RuleContext = RuleContext;
 
-export function RuleContext(parent, invokingState) {
-	RuleNode.call(this);
+var _ATN = require("./atn/ATN");
+
+var INVALID_ALT_NUMBER = _interopRequireWildcard(_ATN);
+
+var _Tree = require("./tree/Tree");
+
+var _Trees = require("./tree/Trees");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function RuleContext(parent, invokingState) {
+	_Tree.RuleNode.call(this);
 	// What context invoked this rule?
 	this.parentCtx = parent || null;
 	// What state invoked the rule associated with this context?
@@ -14,10 +24,10 @@ export function RuleContext(parent, invokingState) {
 	return this;
 }
 
-RuleContext.prototype = Object.create(RuleNode.prototype);
+RuleContext.prototype = Object.create(_Tree.RuleNode.prototype);
 RuleContext.prototype.constructor = RuleContext;
 
-RuleContext.prototype.depth = function() {
+RuleContext.prototype.depth = function () {
 	var n = 0;
 	var p = this;
 	while (p !== null) {
@@ -29,21 +39,21 @@ RuleContext.prototype.depth = function() {
 
 // A context is empty if there is no invoking state; meaning nobody call
 // current context.
-RuleContext.prototype.isEmpty = function() {
+RuleContext.prototype.isEmpty = function () {
 	return this.invokingState === -1;
 };
 
 // satisfy the ParseTree / SyntaxTree interface
 
-RuleContext.prototype.getSourceInterval = function() {
-	return INVALID_INTERVAL;
+RuleContext.prototype.getSourceInterval = function () {
+	return _Tree.INVALID_INTERVAL;
 };
 
-RuleContext.prototype.getRuleContext = function() {
+RuleContext.prototype.getRuleContext = function () {
 	return this;
 };
 
-RuleContext.prototype.getPayload = function() {
+RuleContext.prototype.getPayload = function () {
 	return this;
 };
 
@@ -54,11 +64,11 @@ RuleContext.prototype.getPayload = function() {
 // added to the parse trees, they will not appear in the output of this
 // method.
 // /
-RuleContext.prototype.getText = function() {
+RuleContext.prototype.getText = function () {
 	if (this.getChildCount() === 0) {
 		return "";
 	} else {
-		return this.children.map(function(child) {
+		return this.children.map(function (child) {
 			return child.getText();
 		}).join("");
 	}
@@ -70,37 +80,38 @@ RuleContext.prototype.getText = function() {
 // a subclass of ParserRuleContext with backing field and set
 // option contextSuperClass.
 // to set it.
-RuleContext.prototype.getAltNumber = function() { return INVALID_ALT_NUMBER; }
+RuleContext.prototype.getAltNumber = function () {
+	return INVALID_ALT_NUMBER;
+};
 
 // Set the outer alternative number for this context node. Default
 // implementation does nothing to avoid backing field overhead for
 // trees that don't need it.  Create
 // a subclass of ParserRuleContext with backing field and set
 // option contextSuperClass.
-RuleContext.prototype.setAltNumber = function(altNumber) { }
+RuleContext.prototype.setAltNumber = function (altNumber) {};
 
-RuleContext.prototype.getChild = function(i) {
+RuleContext.prototype.getChild = function (i) {
 	return null;
 };
 
-RuleContext.prototype.getChildCount = function() {
+RuleContext.prototype.getChildCount = function () {
 	return 0;
 };
 
-RuleContext.prototype.accept = function(visitor) {
+RuleContext.prototype.accept = function (visitor) {
 	return visitor.visitChildren(this);
 };
-
 
 // Print out a whole tree, not just a node, in LISP format
 // (root child1 .. childN). Print just a node if this is a leaf.
 //
 
-RuleContext.prototype.toStringTree = function(ruleNames, recog) {
-	return Trees.toStringTree(this, ruleNames, recog);
+RuleContext.prototype.toStringTree = function (ruleNames, recog) {
+	return _Trees.Trees.toStringTree(this, ruleNames, recog);
 };
 
-RuleContext.prototype.toString = function(ruleNames, stop) {
+RuleContext.prototype.toString = function (ruleNames, stop) {
 	ruleNames = ruleNames || null;
 	stop = stop || null;
 	var p = this;
@@ -112,8 +123,7 @@ RuleContext.prototype.toString = function(ruleNames, stop) {
 			}
 		} else {
 			var ri = p.ruleIndex;
-			var ruleName = (ri >= 0 && ri < ruleNames.length) ? ruleNames[ri]
-					: "" + ri;
+			var ruleName = ri >= 0 && ri < ruleNames.length ? ruleNames[ri] : "" + ri;
 			s += ruleName;
 		}
 		if (p.parentCtx !== null && (ruleNames !== null || !p.parentCtx.isEmpty())) {
@@ -124,4 +134,3 @@ RuleContext.prototype.toString = function(ruleNames, stop) {
 	s += "]";
 	return s;
 };
-

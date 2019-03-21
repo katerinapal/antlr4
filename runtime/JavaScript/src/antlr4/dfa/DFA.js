@@ -1,11 +1,12 @@
-import { LexerDFASerializer } from "./DFASerializer";
-import { DFASerializer } from "./DFASerializer";
-import { ATNConfigSet } from "./../atn/ATNConfigSet";
-import { StarLoopEntryState } from "../atn/ATNState";
-import { DFAState } from "./DFAState";
-import { Set } from "../Utils";
+var _DFASerializer = require("./DFASerializer");
 
+var _ATNConfigSet = require("./../atn/ATNConfigSet");
 
+var _ATNState = require("../atn/ATNState");
+
+var _DFAState = require("./DFAState");
+
+var _Utils = require("../Utils");
 
 function DFA(atnStartState, decision) {
 	if (decision === undefined) {
@@ -16,23 +17,22 @@ function DFA(atnStartState, decision) {
 	this.decision = decision;
 	// A set of all DFA states. Use {@link Map} so we can get old state back
 	// ({@link Set} only allows you to see if it's there).
-	this._states = new Set();
+	this._states = new _Utils.Set();
 	this.s0 = null;
 	// {@code true} if this DFA is for a precedence decision; otherwise,
 	// {@code false}. This is the backing field for {@link //isPrecedenceDfa},
 	// {@link //setPrecedenceDfa}.
 	this.precedenceDfa = false;
-    if (atnStartState instanceof StarLoopEntryState)
-    {
-        if (atnStartState.isPrecedenceDecision) {
-            this.precedenceDfa = true;
-            var precedenceState = new DFAState(null, new ATNConfigSet());
-            precedenceState.edges = [];
-            precedenceState.isAcceptState = false;
-            precedenceState.requiresFullContext = false;
-            this.s0 = precedenceState;
-        }
-    }
+	if (atnStartState instanceof _ATNState.StarLoopEntryState) {
+		if (atnStartState.isPrecedenceDecision) {
+			this.precedenceDfa = true;
+			var precedenceState = new _DFAState.DFAState(null, new _ATNConfigSet.ATNConfigSet());
+			precedenceState.edges = [];
+			precedenceState.isAcceptState = false;
+			precedenceState.requiresFullContext = false;
+			this.s0 = precedenceState;
+		}
+	}
 	return this;
 }
 
@@ -45,9 +45,9 @@ function DFA(atnStartState, decision) {
 // @throws IllegalStateException if this is not a precedence DFA.
 // @see //isPrecedenceDfa()
 
-DFA.prototype.getPrecedenceStartState = function(precedence) {
-	if (!(this.precedenceDfa)) {
-		throw ("Only precedence DFAs may contain a precedence start state.");
+DFA.prototype.getPrecedenceStartState = function (precedence) {
+	if (!this.precedenceDfa) {
+		throw "Only precedence DFAs may contain a precedence start state.";
 	}
 	// s0.edges is never null for a precedence DFA
 	if (precedence < 0 || precedence >= this.s0.edges.length) {
@@ -65,9 +65,9 @@ DFA.prototype.getPrecedenceStartState = function(precedence) {
 // @throws IllegalStateException if this is not a precedence DFA.
 // @see //isPrecedenceDfa()
 //
-DFA.prototype.setPrecedenceStartState = function(precedence, startState) {
-	if (!(this.precedenceDfa)) {
-		throw ("Only precedence DFAs may contain a precedence start state.");
+DFA.prototype.setPrecedenceStartState = function (precedence, startState) {
+	if (!this.precedenceDfa) {
+		throw "Only precedence DFAs may contain a precedence start state.";
 	}
 	if (precedence < 0) {
 		return;
@@ -96,11 +96,11 @@ DFA.prototype.setPrecedenceStartState = function(precedence, startState) {
 // @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
 // {@code false}
 
-DFA.prototype.setPrecedenceDfa = function(precedenceDfa) {
-	if (this.precedenceDfa!==precedenceDfa) {
+DFA.prototype.setPrecedenceDfa = function (precedenceDfa) {
+	if (this.precedenceDfa !== precedenceDfa) {
 		this._states = new DFAStatesSet();
 		if (precedenceDfa) {
-			var precedenceState = new DFAState(null, new ATNConfigSet());
+			var precedenceState = new _DFAState.DFAState(null, new _ATNConfigSet.ATNConfigSet());
 			precedenceState.edges = [];
 			precedenceState.isAcceptState = false;
 			precedenceState.requiresFullContext = false;
@@ -113,34 +113,34 @@ DFA.prototype.setPrecedenceDfa = function(precedenceDfa) {
 };
 
 Object.defineProperty(DFA.prototype, "states", {
-	get : function() {
+	get: function get() {
 		return this._states;
 	}
 });
 
 // Return a list of all states in this DFA, ordered by state number.
-DFA.prototype.sortedStates = function() {
+DFA.prototype.sortedStates = function () {
 	var list = this._states.values();
-	return list.sort(function(a, b) {
+	return list.sort(function (a, b) {
 		return a.stateNumber - b.stateNumber;
 	});
 };
 
-DFA.prototype.toString = function(literalNames, symbolicNames) {
+DFA.prototype.toString = function (literalNames, symbolicNames) {
 	literalNames = literalNames || null;
 	symbolicNames = symbolicNames || null;
 	if (this.s0 === null) {
 		return "";
 	}
-	var serializer = new DFASerializer(this, literalNames, symbolicNames);
+	var serializer = new _DFASerializer.DFASerializer(this, literalNames, symbolicNames);
 	return serializer.toString();
 };
 
-DFA.prototype.toLexerString = function() {
+DFA.prototype.toLexerString = function () {
 	if (this.s0 === null) {
 		return "";
 	}
-	var serializer = new LexerDFASerializer(this);
+	var serializer = new _DFASerializer.LexerDFASerializer(this);
 	return serializer.toString();
 };
 

@@ -1,7 +1,18 @@
-import { Hash } from "./Utils";
-import { RuleContext } from "./RuleContext";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.PredictionContext = PredictionContext;
+exports.PredictionContextCache = PredictionContextCache;
+exports.SingletonPredictionContext = SingletonPredictionContext;
+exports.predictionContextFromRuleContext = predictionContextFromRuleContext;
+exports.merge = merge;
+exports.getCachedPredictionContext = getCachedPredictionContext;
 
-export function PredictionContext(cachedHashCode) {
+var _Utils = require("./Utils");
+
+var _RuleContext = require("./RuleContext");
+
+function PredictionContext(cachedHashCode) {
 	this.cachedHashCode = cachedHashCode;
 }
 
@@ -45,21 +56,20 @@ PredictionContext.id = PredictionContext.globalNodeCount;
 // /
 
 // This means only the {@link //EMPTY} context is in set.
-PredictionContext.prototype.isEmpty = function() {
+PredictionContext.prototype.isEmpty = function () {
 	return this === PredictionContext.EMPTY;
 };
 
-PredictionContext.prototype.hasEmptyPath = function() {
+PredictionContext.prototype.hasEmptyPath = function () {
 	return this.getReturnState(this.length - 1) === PredictionContext.EMPTY_RETURN_STATE;
 };
 
-PredictionContext.prototype.hashCode = function() {
+PredictionContext.prototype.hashCode = function () {
 	return this.cachedHashCode;
 };
 
-
-PredictionContext.prototype.updateHashCode = function(hash) {
-    hash.update(this.cachedHashCode);
+PredictionContext.prototype.updateHashCode = function (hash) {
+	hash.update(this.cachedHashCode);
 };
 
 /*
@@ -72,7 +82,7 @@ function calculateHashString(parent, returnState) {
 // context cash associated with contexts in DFA states. This cache
 // can be used for both lexers and parsers.
 
-export function PredictionContextCache() {
+function PredictionContextCache() {
 	this.cache = {};
 	return this;
 }
@@ -81,7 +91,7 @@ export function PredictionContextCache() {
 // return that one instead and do not add a new context to the cache.
 // Protect shared cache from unsafe thread access.
 //
-PredictionContextCache.prototype.add = function(ctx) {
+PredictionContextCache.prototype.add = function (ctx) {
 	if (ctx === PredictionContext.EMPTY) {
 		return PredictionContext.EMPTY;
 	}
@@ -93,22 +103,22 @@ PredictionContextCache.prototype.add = function(ctx) {
 	return ctx;
 };
 
-PredictionContextCache.prototype.get = function(ctx) {
+PredictionContextCache.prototype.get = function (ctx) {
 	return this.cache[ctx] || null;
 };
 
 Object.defineProperty(PredictionContextCache.prototype, "length", {
-	get : function() {
+	get: function get() {
 		return this.cache.length;
 	}
 });
 
-export function SingletonPredictionContext(parent, returnState) {
+function SingletonPredictionContext(parent, returnState) {
 	var hashCode = 0;
-	if(parent !== null) {
-		var hash = new Hash();
+	if (parent !== null) {
+		var hash = new _Utils.Hash();
 		hash.update(parent, returnState);
-        hashCode = hash.finish();
+		hashCode = hash.finish();
 	}
 	PredictionContext.call(this, hashCode);
 	this.parentCtx = parent;
@@ -118,7 +128,7 @@ export function SingletonPredictionContext(parent, returnState) {
 SingletonPredictionContext.prototype = Object.create(PredictionContext.prototype);
 SingletonPredictionContext.prototype.contructor = SingletonPredictionContext;
 
-SingletonPredictionContext.create = function(parent, returnState) {
+SingletonPredictionContext.create = function (parent, returnState) {
 	if (returnState === PredictionContext.EMPTY_RETURN_STATE && parent === null) {
 		// someone can pass in the bits of an array ctx that mean $
 		return PredictionContext.EMPTY;
@@ -128,20 +138,20 @@ SingletonPredictionContext.create = function(parent, returnState) {
 };
 
 Object.defineProperty(SingletonPredictionContext.prototype, "length", {
-	get : function() {
+	get: function get() {
 		return 1;
 	}
 });
 
-SingletonPredictionContext.prototype.getParent = function(index) {
+SingletonPredictionContext.prototype.getParent = function (index) {
 	return this.parentCtx;
 };
 
-SingletonPredictionContext.prototype.getReturnState = function(index) {
+SingletonPredictionContext.prototype.getReturnState = function (index) {
 	return this.returnState;
 };
 
-SingletonPredictionContext.prototype.equals = function(other) {
+SingletonPredictionContext.prototype.equals = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof SingletonPredictionContext)) {
@@ -149,16 +159,11 @@ SingletonPredictionContext.prototype.equals = function(other) {
 	} else if (this.hashCode() !== other.hashCode()) {
 		return false; // can't be same if hash is different
 	} else {
-		if(this.returnState !== other.returnState)
-            return false;
-        else if(this.parentCtx==null)
-            return other.parentCtx==null
-		else
-            return this.parentCtx.equals(other.parentCtx);
+		if (this.returnState !== other.returnState) return false;else if (this.parentCtx == null) return other.parentCtx == null;else return this.parentCtx.equals(other.parentCtx);
 	}
 };
 
-SingletonPredictionContext.prototype.toString = function() {
+SingletonPredictionContext.prototype.toString = function () {
 	var up = this.parentCtx === null ? "" : this.parentCtx.toString();
 	if (up.length === 0) {
 		if (this.returnState === PredictionContext.EMPTY_RETURN_STATE) {
@@ -179,23 +184,23 @@ function EmptyPredictionContext() {
 EmptyPredictionContext.prototype = Object.create(SingletonPredictionContext.prototype);
 EmptyPredictionContext.prototype.constructor = EmptyPredictionContext;
 
-EmptyPredictionContext.prototype.isEmpty = function() {
+EmptyPredictionContext.prototype.isEmpty = function () {
 	return true;
 };
 
-EmptyPredictionContext.prototype.getParent = function(index) {
+EmptyPredictionContext.prototype.getParent = function (index) {
 	return null;
 };
 
-EmptyPredictionContext.prototype.getReturnState = function(index) {
+EmptyPredictionContext.prototype.getReturnState = function (index) {
 	return this.returnState;
 };
 
-EmptyPredictionContext.prototype.equals = function(other) {
+EmptyPredictionContext.prototype.equals = function (other) {
 	return this === other;
 };
 
-EmptyPredictionContext.prototype.toString = function() {
+EmptyPredictionContext.prototype.toString = function () {
 	return "$";
 };
 
@@ -206,7 +211,7 @@ function ArrayPredictionContext(parents, returnStates) {
 	// from {@link //EMPTY} and non-empty. We merge {@link //EMPTY} by using
 	// null parent and
 	// returnState == {@link //EMPTY_RETURN_STATE}.
-	var h = new Hash();
+	var h = new _Utils.Hash();
 	h.update(parents, returnStates);
 	var hashCode = h.finish();
 	PredictionContext.call(this, hashCode);
@@ -218,27 +223,27 @@ function ArrayPredictionContext(parents, returnStates) {
 ArrayPredictionContext.prototype = Object.create(PredictionContext.prototype);
 ArrayPredictionContext.prototype.constructor = ArrayPredictionContext;
 
-ArrayPredictionContext.prototype.isEmpty = function() {
+ArrayPredictionContext.prototype.isEmpty = function () {
 	// since EMPTY_RETURN_STATE can only appear in the last position, we
 	// don't need to verify that size==1
 	return this.returnStates[0] === PredictionContext.EMPTY_RETURN_STATE;
 };
 
 Object.defineProperty(ArrayPredictionContext.prototype, "length", {
-	get : function() {
+	get: function get() {
 		return this.returnStates.length;
 	}
 });
 
-ArrayPredictionContext.prototype.getParent = function(index) {
+ArrayPredictionContext.prototype.getParent = function (index) {
 	return this.parents[index];
 };
 
-ArrayPredictionContext.prototype.getReturnState = function(index) {
+ArrayPredictionContext.prototype.getReturnState = function (index) {
 	return this.returnStates[index];
 };
 
-ArrayPredictionContext.prototype.equals = function(other) {
+ArrayPredictionContext.prototype.equals = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof ArrayPredictionContext)) {
@@ -246,12 +251,11 @@ ArrayPredictionContext.prototype.equals = function(other) {
 	} else if (this.hashCode() !== other.hashCode()) {
 		return false; // can't be same if hash is different
 	} else {
-		return this.returnStates === other.returnStates &&
-				this.parents === other.parents;
+		return this.returnStates === other.returnStates && this.parents === other.parents;
 	}
 };
 
-ArrayPredictionContext.prototype.toString = function() {
+ArrayPredictionContext.prototype.toString = function () {
 	if (this.isEmpty()) {
 		return "[]";
 	} else {
@@ -278,13 +282,13 @@ ArrayPredictionContext.prototype.toString = function() {
 // Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
 // Return {@link //EMPTY} if {@code outerContext} is empty or null.
 // /
-export function predictionContextFromRuleContext(atn, outerContext) {
+function predictionContextFromRuleContext(atn, outerContext) {
 	if (outerContext === undefined || outerContext === null) {
-		outerContext = RuleContext.EMPTY;
+		outerContext = _RuleContext.RuleContext.EMPTY;
 	}
 	// if we are in RuleContext of start rule, s, then PredictionContext
 	// is EMPTY. Nobody called us. (if we are empty, return empty)
-	if (outerContext.parentCtx === null || outerContext === RuleContext.EMPTY) {
+	if (outerContext.parentCtx === null || outerContext === _RuleContext.RuleContext.EMPTY) {
 		return PredictionContext.EMPTY;
 	}
 	// If we have a parent, convert it to a PredictionContext graph
@@ -306,7 +310,7 @@ function calculateListsHashString(parents, returnStates) {
 	return s;
 }
 */
-export function merge(a, b, rootIsWildcard, mergeCache) {
+function merge(a, b, rootIsWildcard, mergeCache) {
 	// share same graph if both same
 	if (a === b) {
 		return a;
@@ -403,22 +407,25 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
 			mergeCache.set(a, b, spc);
 		}
 		return spc;
-	} else { // a != b payloads differ
+	} else {
+		// a != b payloads differ
 		// see if we can collapse parents due to $+x parents if local ctx
 		var singleParent = null;
-		if (a === b || (a.parentCtx !== null && a.parentCtx === b.parentCtx)) { // ax +
-																				// bx =
-																				// [a,b]x
+		if (a === b || a.parentCtx !== null && a.parentCtx === b.parentCtx) {
+			// ax +
+			// bx =
+			// [a,b]x
 			singleParent = a.parentCtx;
 		}
-		if (singleParent !== null) { // parents are same
+		if (singleParent !== null) {
+			// parents are same
 			// sort payloads and use same parent
-			var payloads = [ a.returnState, b.returnState ];
+			var payloads = [a.returnState, b.returnState];
 			if (a.returnState > b.returnState) {
 				payloads[0] = b.returnState;
 				payloads[1] = a.returnState;
 			}
-			var parents = [ singleParent, singleParent ];
+			var parents = [singleParent, singleParent];
 			var apc = new ArrayPredictionContext(parents, payloads);
 			if (mergeCache !== null) {
 				mergeCache.set(a, b, apc);
@@ -428,12 +435,13 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
 		// parents differ and can't merge them. Just pack together
 		// into array; can't merge.
 		// ax + by = [ax,by]
-		var payloads = [ a.returnState, b.returnState ];
-		var parents = [ a.parentCtx, b.parentCtx ];
-		if (a.returnState > b.returnState) { // sort by payload
+		var payloads = [a.returnState, b.returnState];
+		var parents = [a.parentCtx, b.parentCtx];
+		if (a.returnState > b.returnState) {
+			// sort by payload
 			payloads[0] = b.returnState;
 			payloads[1] = a.returnState;
-			parents = [ b.parentCtx, a.parentCtx ];
+			parents = [b.parentCtx, a.parentCtx];
 		}
 		var a_ = new ArrayPredictionContext(parents, payloads);
 		if (mergeCache !== null) {
@@ -492,14 +500,15 @@ function mergeRoot(a, b, rootIsWildcard) {
 	} else {
 		if (a === PredictionContext.EMPTY && b === PredictionContext.EMPTY) {
 			return PredictionContext.EMPTY; // $ + $ = $
-		} else if (a === PredictionContext.EMPTY) { // $ + x = [$,x]
-			var payloads = [ b.returnState,
-					PredictionContext.EMPTY_RETURN_STATE ];
-			var parents = [ b.parentCtx, null ];
+		} else if (a === PredictionContext.EMPTY) {
+			// $ + x = [$,x]
+			var payloads = [b.returnState, PredictionContext.EMPTY_RETURN_STATE];
+			var parents = [b.parentCtx, null];
 			return new ArrayPredictionContext(parents, payloads);
-		} else if (b === PredictionContext.EMPTY) { // x + $ = [$,x] ($ is always first if present)
-			var payloads = [ a.returnState, PredictionContext.EMPTY_RETURN_STATE ];
-			var parents = [ a.parentCtx, null ];
+		} else if (b === PredictionContext.EMPTY) {
+			// x + $ = [$,x] ($ is always first if present)
+			var payloads = [a.returnState, PredictionContext.EMPTY_RETURN_STATE];
+			var parents = [a.parentCtx, null];
 			return new ArrayPredictionContext(parents, payloads);
 		}
 	}
@@ -552,26 +561,28 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
 			// same payload (stack tops are equal), must yield merged singleton
 			var payload = a.returnStates[i];
 			// $+$ = $
-			var bothDollars = payload === PredictionContext.EMPTY_RETURN_STATE &&
-					a_parent === null && b_parent === null;
-			var ax_ax = (a_parent !== null && b_parent !== null && a_parent === b_parent); // ax+ax
-																							// ->
-																							// ax
+			var bothDollars = payload === PredictionContext.EMPTY_RETURN_STATE && a_parent === null && b_parent === null;
+			var ax_ax = a_parent !== null && b_parent !== null && a_parent === b_parent; // ax+ax
+			// ->
+			// ax
 			if (bothDollars || ax_ax) {
 				mergedParents[k] = a_parent; // choose left
 				mergedReturnStates[k] = payload;
-			} else { // ax+ay -> a'[x,y]
+			} else {
+				// ax+ay -> a'[x,y]
 				var mergedParent = merge(a_parent, b_parent, rootIsWildcard, mergeCache);
 				mergedParents[k] = mergedParent;
 				mergedReturnStates[k] = payload;
 			}
 			i += 1; // hop over left one as usual
 			j += 1; // but also skip one in right side since we merge
-		} else if (a.returnStates[i] < b.returnStates[j]) { // copy a[i] to M
+		} else if (a.returnStates[i] < b.returnStates[j]) {
+			// copy a[i] to M
 			mergedParents[k] = a_parent;
 			mergedReturnStates[k] = a.returnStates[i];
 			i += 1;
-		} else { // b > a, copy b[j] to M
+		} else {
+			// b > a, copy b[j] to M
 			mergedParents[k] = b_parent;
 			mergedReturnStates[k] = b.returnStates[j];
 			j += 1;
@@ -593,10 +604,11 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
 		}
 	}
 	// trim merged if we combined a few that had same stack tops
-	if (k < mergedParents.length) { // write index < last position; trim
-		if (k === 1) { // for just one merged element, return singleton top
-			var a_ = SingletonPredictionContext.create(mergedParents[0],
-					mergedReturnStates[0]);
+	if (k < mergedParents.length) {
+		// write index < last position; trim
+		if (k === 1) {
+			// for just one merged element, return singleton top
+			var a_ = SingletonPredictionContext.create(mergedParents[0], mergedReturnStates[0]);
 			if (mergeCache !== null) {
 				mergeCache.set(a, b, a_);
 			}
@@ -648,7 +660,7 @@ function combineCommonParents(parents) {
 	}
 }
 
-export function getCachedPredictionContext(context, contextCache, visited) {
+function getCachedPredictionContext(context, contextCache, visited) {
 	if (context.isEmpty()) {
 		return context;
 	}
@@ -685,8 +697,7 @@ export function getCachedPredictionContext(context, contextCache, visited) {
 	if (parents.length === 0) {
 		updated = PredictionContext.EMPTY;
 	} else if (parents.length === 1) {
-		updated = SingletonPredictionContext.create(parents[0], context
-				.getReturnState(0));
+		updated = SingletonPredictionContext.create(parents[0], context.getReturnState(0));
 	} else {
 		updated = new ArrayPredictionContext(parents, context.returnStates);
 	}

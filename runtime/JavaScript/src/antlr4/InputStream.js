@@ -1,6 +1,13 @@
-import "./polyfills/fromcodepoint";
-import "./polyfills/codepointat";
-import { Token } from "./Token";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.InputStream = InputStream;
+
+require("./polyfills/fromcodepoint");
+
+require("./polyfills/codepointat");
+
+var _Token = require("./Token");
 
 // Vacuum all input from a string and then treat it like a buffer.
 
@@ -8,7 +15,7 @@ function _loadString(stream) {
 	stream._index = 0;
 	stream.data = [];
 	if (stream.decodeToUnicodeCodePoints) {
-		for (var i = 0; i < stream.strdata.length; ) {
+		for (var i = 0; i < stream.strdata.length;) {
 			var codePoint = stream.strdata.codePointAt(i);
 			stream.data.push(codePoint);
 			i += codePoint <= 0xFFFF ? 1 : 2;
@@ -27,7 +34,7 @@ function _loadString(stream) {
 //
 // Otherwise, the input is treated as a series of 16-bit UTF-16 code
 // units.
-export function InputStream(data, decodeToUnicodeCodePoints) {
+function InputStream(data, decodeToUnicodeCodePoints) {
 	this.name = "<empty>";
 	this.strdata = data;
 	this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints || false;
@@ -36,13 +43,13 @@ export function InputStream(data, decodeToUnicodeCodePoints) {
 }
 
 Object.defineProperty(InputStream.prototype, "index", {
-	get : function() {
+	get: function get() {
 		return this._index;
 	}
 });
 
 Object.defineProperty(InputStream.prototype, "size", {
-	get : function() {
+	get: function get() {
 		return this._size;
 	}
 });
@@ -51,19 +58,19 @@ Object.defineProperty(InputStream.prototype, "size", {
 // when the object was created *except* the data array is not
 // touched.
 //
-InputStream.prototype.reset = function() {
+InputStream.prototype.reset = function () {
 	this._index = 0;
 };
 
-InputStream.prototype.consume = function() {
+InputStream.prototype.consume = function () {
 	if (this._index >= this._size) {
 		// assert this.LA(1) == Token.EOF
-		throw ("cannot consume EOF");
+		throw "cannot consume EOF";
 	}
 	this._index += 1;
 };
 
-InputStream.prototype.LA = function(offset) {
+InputStream.prototype.LA = function (offset) {
 	if (offset === 0) {
 		return 0; // undefined
 	}
@@ -71,38 +78,38 @@ InputStream.prototype.LA = function(offset) {
 		offset += 1; // e.g., translate LA(-1) to use offset=0
 	}
 	var pos = this._index + offset - 1;
-	if (pos < 0 || pos >= this._size) { // invalid
-		return Token.EOF;
+	if (pos < 0 || pos >= this._size) {
+		// invalid
+		return _Token.Token.EOF;
 	}
 	return this.data[pos];
 };
 
-InputStream.prototype.LT = function(offset) {
+InputStream.prototype.LT = function (offset) {
 	return this.LA(offset);
 };
 
 // mark/release do nothing; we have entire buffer
-InputStream.prototype.mark = function() {
+InputStream.prototype.mark = function () {
 	return -1;
 };
 
-InputStream.prototype.release = function(marker) {
-};
+InputStream.prototype.release = function (marker) {};
 
 // consume() ahead until p==_index; can't just set p=_index as we must
 // update line and column. If we seek backwards, just set p
 //
-InputStream.prototype.seek = function(_index) {
+InputStream.prototype.seek = function (_index) {
 	if (_index <= this._index) {
 		this._index = _index; // just jump; don't update stream state (line,
-								// ...)
+		// ...)
 		return;
 	}
 	// seek forward
 	this._index = Math.min(_index, this._size);
 };
 
-InputStream.prototype.getText = function(start, stop) {
+InputStream.prototype.getText = function (start, stop) {
 	if (stop >= this._size) {
 		stop = this._size - 1;
 	}
@@ -121,6 +128,6 @@ InputStream.prototype.getText = function(start, stop) {
 	}
 };
 
-InputStream.prototype.toString = function() {
+InputStream.prototype.toString = function () {
 	return this.strdata;
 };

@@ -1,14 +1,20 @@
-import { Hash } from "./../Utils";
-import { Set } from "./../Utils";
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.SemanticContext = SemanticContext;
+exports.Predicate = Predicate;
+exports.PrecedencePredicate = PrecedencePredicate;
 
-export function SemanticContext() {
+var _Utils = require("./../Utils");
+
+function SemanticContext() {
 	return this;
 }
 
-SemanticContext.prototype.hashCode = function() {
-    var hash = new Hash();
-    this.updateHashCode(hash);
-    return hash.finish();
+SemanticContext.prototype.hashCode = function () {
+	var hash = new _Utils.Hash();
+	this.updateHashCode(hash);
+	return hash.finish();
 };
 
 // For context independent predicates, we evaluate them without a local
@@ -23,8 +29,7 @@ SemanticContext.prototype.hashCode = function() {
 // prediction, so we passed in the outer context here in case of context
 // dependent predicate evaluation.</p>
 //
-SemanticContext.prototype.evaluate = function(parser, outerContext) {
-};
+SemanticContext.prototype.evaluate = function (parser, outerContext) {};
 
 //
 // Evaluate the precedence predicates for the context and reduce the result.
@@ -44,11 +49,11 @@ SemanticContext.prototype.evaluate = function(parser, outerContext) {
 // semantic context after precedence predicates are evaluated.</li>
 // </ul>
 //
-SemanticContext.prototype.evalPrecedence = function(parser, outerContext) {
+SemanticContext.prototype.evalPrecedence = function (parser, outerContext) {
 	return this;
 };
 
-SemanticContext.andContext = function(a, b) {
+SemanticContext.andContext = function (a, b) {
 	if (a === null || a === SemanticContext.NONE) {
 		return b;
 	}
@@ -63,7 +68,7 @@ SemanticContext.andContext = function(a, b) {
 	}
 };
 
-SemanticContext.orContext = function(a, b) {
+SemanticContext.orContext = function (a, b) {
 	if (a === null) {
 		return b;
 	}
@@ -81,7 +86,7 @@ SemanticContext.orContext = function(a, b) {
 	}
 };
 
-export function Predicate(ruleIndex, predIndex, isCtxDependent) {
+function Predicate(ruleIndex, predIndex, isCtxDependent) {
 	SemanticContext.call(this);
 	this.ruleIndex = ruleIndex === undefined ? -1 : ruleIndex;
 	this.predIndex = predIndex === undefined ? -1 : predIndex;
@@ -97,33 +102,30 @@ Predicate.prototype.constructor = Predicate;
 //
 SemanticContext.NONE = new Predicate();
 
-
-Predicate.prototype.evaluate = function(parser, outerContext) {
+Predicate.prototype.evaluate = function (parser, outerContext) {
 	var localctx = this.isCtxDependent ? outerContext : null;
 	return parser.sempred(localctx, this.ruleIndex, this.predIndex);
 };
 
-Predicate.prototype.updateHashCode = function(hash) {
+Predicate.prototype.updateHashCode = function (hash) {
 	hash.update(this.ruleIndex, this.predIndex, this.isCtxDependent);
 };
 
-Predicate.prototype.equals = function(other) {
+Predicate.prototype.equals = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof Predicate)) {
 		return false;
 	} else {
-		return this.ruleIndex === other.ruleIndex &&
-				this.predIndex === other.predIndex &&
-				this.isCtxDependent === other.isCtxDependent;
+		return this.ruleIndex === other.ruleIndex && this.predIndex === other.predIndex && this.isCtxDependent === other.isCtxDependent;
 	}
 };
 
-Predicate.prototype.toString = function() {
+Predicate.prototype.toString = function () {
 	return "{" + this.ruleIndex + ":" + this.predIndex + "}?";
 };
 
-export function PrecedencePredicate(precedence) {
+function PrecedencePredicate(precedence) {
 	SemanticContext.call(this);
 	this.precedence = precedence === undefined ? 0 : precedence;
 }
@@ -131,11 +133,11 @@ export function PrecedencePredicate(precedence) {
 PrecedencePredicate.prototype = Object.create(SemanticContext.prototype);
 PrecedencePredicate.prototype.constructor = PrecedencePredicate;
 
-PrecedencePredicate.prototype.evaluate = function(parser, outerContext) {
+PrecedencePredicate.prototype.evaluate = function (parser, outerContext) {
 	return parser.precpred(outerContext, this.precedence);
 };
 
-PrecedencePredicate.prototype.evalPrecedence = function(parser, outerContext) {
+PrecedencePredicate.prototype.evalPrecedence = function (parser, outerContext) {
 	if (parser.precpred(outerContext, this.precedence)) {
 		return SemanticContext.NONE;
 	} else {
@@ -143,15 +145,15 @@ PrecedencePredicate.prototype.evalPrecedence = function(parser, outerContext) {
 	}
 };
 
-PrecedencePredicate.prototype.compareTo = function(other) {
+PrecedencePredicate.prototype.compareTo = function (other) {
 	return this.precedence - other.precedence;
 };
 
-PrecedencePredicate.prototype.updateHashCode = function(hash) {
-    hash.update(31);
+PrecedencePredicate.prototype.updateHashCode = function (hash) {
+	hash.update(31);
 };
 
-PrecedencePredicate.prototype.equals = function(other) {
+PrecedencePredicate.prototype.equals = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof PrecedencePredicate)) {
@@ -161,15 +163,13 @@ PrecedencePredicate.prototype.equals = function(other) {
 	}
 };
 
-PrecedencePredicate.prototype.toString = function() {
-	return "{"+this.precedence+">=prec}?";
+PrecedencePredicate.prototype.toString = function () {
+	return "{" + this.precedence + ">=prec}?";
 };
 
-
-
-PrecedencePredicate.filterPrecedencePredicates = function(set) {
+PrecedencePredicate.filterPrecedencePredicates = function (set) {
 	var result = [];
-	set.values().map( function(context) {
+	set.values().map(function (context) {
 		if (context instanceof PrecedencePredicate) {
 			result.push(context);
 		}
@@ -177,22 +177,21 @@ PrecedencePredicate.filterPrecedencePredicates = function(set) {
 	return result;
 };
 
-
 // A semantic context which is true whenever none of the contained contexts
 // is false.
 //
 function AND(a, b) {
 	SemanticContext.call(this);
-	var operands = new Set();
+	var operands = new _Utils.Set();
 	if (a instanceof AND) {
-		a.opnds.map(function(o) {
+		a.opnds.map(function (o) {
 			operands.add(o);
 		});
 	} else {
 		operands.add(a);
 	}
 	if (b instanceof AND) {
-		b.opnds.map(function(o) {
+		b.opnds.map(function (o) {
 			operands.add(o);
 		});
 	} else {
@@ -202,8 +201,8 @@ function AND(a, b) {
 	if (precedencePredicates.length > 0) {
 		// interested in the transition with the lowest precedence
 		var reduced = null;
-		precedencePredicates.map( function(p) {
-			if(reduced===null || p.precedence<reduced.precedence) {
+		precedencePredicates.map(function (p) {
+			if (reduced === null || p.precedence < reduced.precedence) {
 				reduced = p;
 			}
 		});
@@ -216,7 +215,7 @@ function AND(a, b) {
 AND.prototype = Object.create(SemanticContext.prototype);
 AND.prototype.constructor = AND;
 
-AND.prototype.equals = function(other) {
+AND.prototype.equals = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof AND)) {
@@ -226,8 +225,8 @@ AND.prototype.equals = function(other) {
 	}
 };
 
-AND.prototype.updateHashCode = function(hash) {
-    hash.update(this.opnds, "AND");
+AND.prototype.updateHashCode = function (hash) {
+	hash.update(this.opnds, "AND");
 };
 //
 // {@inheritDoc}
@@ -236,7 +235,7 @@ AND.prototype.updateHashCode = function(hash) {
 // The evaluation of predicates by this context is short-circuiting, but
 // unordered.</p>
 //
-AND.prototype.evaluate = function(parser, outerContext) {
+AND.prototype.evaluate = function (parser, outerContext) {
 	for (var i = 0; i < this.opnds.length; i++) {
 		if (!this.opnds[i].evaluate(parser, outerContext)) {
 			return false;
@@ -245,13 +244,13 @@ AND.prototype.evaluate = function(parser, outerContext) {
 	return true;
 };
 
-AND.prototype.evalPrecedence = function(parser, outerContext) {
+AND.prototype.evalPrecedence = function (parser, outerContext) {
 	var differs = false;
 	var operands = [];
 	for (var i = 0; i < this.opnds.length; i++) {
 		var context = this.opnds[i];
 		var evaluated = context.evalPrecedence(parser, outerContext);
-		differs |= (evaluated !== context);
+		differs |= evaluated !== context;
 		if (evaluated === null) {
 			// The AND context is false if any element is false
 			return null;
@@ -268,15 +267,15 @@ AND.prototype.evalPrecedence = function(parser, outerContext) {
 		return SemanticContext.NONE;
 	}
 	var result = null;
-	operands.map(function(o) {
+	operands.map(function (o) {
 		result = result === null ? o : SemanticContext.andContext(result, o);
 	});
 	return result;
 };
 
-AND.prototype.toString = function() {
+AND.prototype.toString = function () {
 	var s = "";
-	this.opnds.map(function(o) {
+	this.opnds.map(function (o) {
 		s += "&& " + o.toString();
 	});
 	return s.length > 3 ? s.slice(3) : s;
@@ -288,16 +287,16 @@ AND.prototype.toString = function() {
 //
 function OR(a, b) {
 	SemanticContext.call(this);
-	var operands = new Set();
+	var operands = new _Utils.Set();
 	if (a instanceof OR) {
-		a.opnds.map(function(o) {
+		a.opnds.map(function (o) {
 			operands.add(o);
 		});
 	} else {
 		operands.add(a);
 	}
 	if (b instanceof OR) {
-		b.opnds.map(function(o) {
+		b.opnds.map(function (o) {
 			operands.add(o);
 		});
 	} else {
@@ -307,10 +306,10 @@ function OR(a, b) {
 	var precedencePredicates = PrecedencePredicate.filterPrecedencePredicates(operands);
 	if (precedencePredicates.length > 0) {
 		// interested in the transition with the highest precedence
-		var s = precedencePredicates.sort(function(a, b) {
+		var s = precedencePredicates.sort(function (a, b) {
 			return a.compareTo(b);
 		});
-		var reduced = s[s.length-1];
+		var reduced = s[s.length - 1];
 		operands.add(reduced);
 	}
 	this.opnds = operands.values();
@@ -320,7 +319,7 @@ function OR(a, b) {
 OR.prototype = Object.create(SemanticContext.prototype);
 OR.prototype.constructor = OR;
 
-OR.prototype.constructor = function(other) {
+OR.prototype.constructor = function (other) {
 	if (this === other) {
 		return true;
 	} else if (!(other instanceof OR)) {
@@ -330,15 +329,15 @@ OR.prototype.constructor = function(other) {
 	}
 };
 
-OR.prototype.updateHashCode = function(hash) {
-    hash.update(this.opnds, "OR");
+OR.prototype.updateHashCode = function (hash) {
+	hash.update(this.opnds, "OR");
 };
 
 // <p>
 // The evaluation of predicates by this context is short-circuiting, but
 // unordered.</p>
 //
-OR.prototype.evaluate = function(parser, outerContext) {
+OR.prototype.evaluate = function (parser, outerContext) {
 	for (var i = 0; i < this.opnds.length; i++) {
 		if (this.opnds[i].evaluate(parser, outerContext)) {
 			return true;
@@ -347,13 +346,13 @@ OR.prototype.evaluate = function(parser, outerContext) {
 	return false;
 };
 
-OR.prototype.evalPrecedence = function(parser, outerContext) {
+OR.prototype.evalPrecedence = function (parser, outerContext) {
 	var differs = false;
 	var operands = [];
 	for (var i = 0; i < this.opnds.length; i++) {
 		var context = this.opnds[i];
 		var evaluated = context.evalPrecedence(parser, outerContext);
-		differs |= (evaluated !== context);
+		differs |= evaluated !== context;
 		if (evaluated === SemanticContext.NONE) {
 			// The OR context is true if any element is true
 			return SemanticContext.NONE;
@@ -370,15 +369,15 @@ OR.prototype.evalPrecedence = function(parser, outerContext) {
 		return null;
 	}
 	var result = null;
-	operands.map(function(o) {
+	operands.map(function (o) {
 		return result === null ? o : SemanticContext.orContext(result, o);
 	});
 	return result;
 };
 
-OR.prototype.toString = function() {
+OR.prototype.toString = function () {
 	var s = "";
-	this.opnds.map(function(o) {
+	this.opnds.map(function (o) {
 		s += "|| " + o.toString();
 	});
 	return s.length > 3 ? s.slice(3) : s;
