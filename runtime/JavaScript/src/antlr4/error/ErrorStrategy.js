@@ -1,19 +1,12 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-
-var Token = require('./../Token').Token;
-var Errors = require('./Errors');
+import * as Errors from "./Errors";
+import { IntervalSet } from "./../IntervalSet";
+import { Interval } from "./../IntervalSet";
+import { ATNState } from "./../atn/ATNState";
+import { Token } from "./../Token";
 var NoViableAltException = Errors.NoViableAltException;
 var InputMismatchException = Errors.InputMismatchException;
 var FailedPredicateException = Errors.FailedPredicateException;
 var ParseCancellationException = Errors.ParseCancellationException;
-var ATNState = require('./../atn/ATNState').ATNState;
-var Interval = require('./../IntervalSet').Interval;
-var IntervalSet = require('./../IntervalSet').IntervalSet;
 
 function ErrorStrategy() {
 
@@ -42,7 +35,7 @@ ErrorStrategy.prototype.reportError = function(recognizer){
 // This is the default implementation of {@link ANTLRErrorStrategy} used for
 // error reporting and recovery in ANTLR parsers.
 //
-function DefaultErrorStrategy() {
+export function DefaultErrorStrategy() {
 	ErrorStrategy.call(this);
     // Indicates whether the error strategy is currently "recovering from an
     // error". This is used to suppress reporting multiple error messages while
@@ -753,4 +746,3 @@ BailErrorStrategy.prototype.sync = function(recognizer) {
 };
 
 exports.BailErrorStrategy = BailErrorStrategy;
-exports.DefaultErrorStrategy = DefaultErrorStrategy;

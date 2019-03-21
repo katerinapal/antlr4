@@ -1,21 +1,7 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
+import { LexerIndexedCustomAction } from "./LexerAction";
+import { hashStuff } from "../Utils";
 
-// Represents an executor for a sequence of lexer actions which traversed during
-// the matching operation of a lexer rule (token).
-//
-// <p>The executor tracks position information for position-dependent lexer actions
-// efficiently, ensuring that actions appearing only at the end of the rule do
-// not cause bloating of the {@link DFA} created for the lexer.</p>
-
-var hashStuff = require("../Utils").hashStuff;
-var LexerIndexedCustomAction = require('./LexerAction').LexerIndexedCustomAction;
-
-function LexerActionExecutor(lexerActions) {
+export function LexerActionExecutor(lexerActions) {
 	this.lexerActions = lexerActions === null ? [] : lexerActions;
 	// Caches the result of {@link //hashCode} since the hash code is an element
 	// of the performance-critical {@link LexerATNConfig//hashCode} operation.
@@ -162,5 +148,3 @@ LexerActionExecutor.prototype.equals = function(other) {
 		return true;
 	}
 };
-
-exports.LexerActionExecutor = LexerActionExecutor;

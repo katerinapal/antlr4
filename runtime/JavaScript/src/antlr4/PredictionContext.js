@@ -1,14 +1,7 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
+import { Hash } from "./Utils";
+import { RuleContext } from "./RuleContext";
 
-var RuleContext = require('./RuleContext').RuleContext;
-var Hash = require('./Utils').Hash;
-
-function PredictionContext(cachedHashCode) {
+export function PredictionContext(cachedHashCode) {
 	this.cachedHashCode = cachedHashCode;
 }
 
@@ -68,6 +61,7 @@ PredictionContext.prototype.hashCode = function() {
 PredictionContext.prototype.updateHashCode = function(hash) {
     hash.update(this.cachedHashCode);
 };
+
 /*
 function calculateHashString(parent, returnState) {
 	return "" + parent + returnState;
@@ -78,7 +72,7 @@ function calculateHashString(parent, returnState) {
 // context cash associated with contexts in DFA states. This cache
 // can be used for both lexers and parsers.
 
-function PredictionContextCache() {
+export function PredictionContextCache() {
 	this.cache = {};
 	return this;
 }
@@ -109,7 +103,7 @@ Object.defineProperty(PredictionContextCache.prototype, "length", {
 	}
 });
 
-function SingletonPredictionContext(parent, returnState) {
+export function SingletonPredictionContext(parent, returnState) {
 	var hashCode = 0;
 	if(parent !== null) {
 		var hash = new Hash();
@@ -284,7 +278,7 @@ ArrayPredictionContext.prototype.toString = function() {
 // Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
 // Return {@link //EMPTY} if {@code outerContext} is empty or null.
 // /
-function predictionContextFromRuleContext(atn, outerContext) {
+export function predictionContextFromRuleContext(atn, outerContext) {
 	if (outerContext === undefined || outerContext === null) {
 		outerContext = RuleContext.EMPTY;
 	}
@@ -299,6 +293,7 @@ function predictionContextFromRuleContext(atn, outerContext) {
 	var transition = state.transitions[0];
 	return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
 }
+
 /*
 function calculateListsHashString(parents, returnStates) {
 	var s = "";
@@ -311,7 +306,7 @@ function calculateListsHashString(parents, returnStates) {
 	return s;
 }
 */
-function merge(a, b, rootIsWildcard, mergeCache) {
+export function merge(a, b, rootIsWildcard, mergeCache) {
 	// share same graph if both same
 	if (a === b) {
 		return a;
@@ -653,7 +648,7 @@ function combineCommonParents(parents) {
 	}
 }
 
-function getCachedPredictionContext(context, contextCache, visited) {
+export function getCachedPredictionContext(context, contextCache, visited) {
 	if (context.isEmpty()) {
 		return context;
 	}
@@ -722,10 +717,3 @@ function getAllContextNodes(context, nodes, visited) {
 		return nodes;
 	}
 }
-
-exports.merge = merge;
-exports.PredictionContext = PredictionContext;
-exports.PredictionContextCache = PredictionContextCache;
-exports.SingletonPredictionContext = SingletonPredictionContext;
-exports.predictionContextFromRuleContext = predictionContextFromRuleContext;
-exports.getCachedPredictionContext = getCachedPredictionContext;

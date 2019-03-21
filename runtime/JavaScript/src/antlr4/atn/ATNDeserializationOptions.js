@@ -3,7 +3,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-function ATNDeserializationOptions(copyFrom) {
+export function ATNDeserializationOptions(copyFrom) {
 	if(copyFrom===undefined) {
 		copyFrom = null;
 	}
@@ -16,10 +16,3 @@ function ATNDeserializationOptions(copyFrom) {
 
 ATNDeserializationOptions.defaultOptions = new ATNDeserializationOptions();
 ATNDeserializationOptions.defaultOptions.readOnly = true;
-
-//    def __setattr__(self, key, value):
-//        if key!="readOnly" and self.readOnly:
-//            raise Exception("The object is read only.")
-//        super(type(self), self).__setattr__(key,value)
-
-exports.ATNDeserializationOptions = ATNDeserializationOptions;

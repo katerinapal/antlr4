@@ -1,32 +1,6 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-
-//
-// This implementation of {@link ANTLRErrorListener} can be used to identify
-// certain potential correctness and performance problems in grammars. "Reports"
-// are made by calling {@link Parser//notifyErrorListeners} with the appropriate
-// message.
-//
-// <ul>
-// <li><b>Ambiguities</b>: These are cases where more than one path through the
-// grammar can match the input.</li>
-// <li><b>Weak context sensitivity</b>: These are cases where full-context
-// prediction resolved an SLL conflict to a unique alternative which equaled the
-// minimum alternative of the SLL conflict.</li>
-// <li><b>Strong (forced) context sensitivity</b>: These are cases where the
-// full-context prediction resolved an SLL conflict to a unique alternative,
-// <em>and</em> the minimum alternative of the SLL conflict was found to not be
-// a truly viable alternative. Two-stage parsing cannot be used for inputs where
-// this situation occurs.</li>
-// </ul>
-
-var BitSet = require('./../Utils').BitSet;
-var ErrorListener = require('./ErrorListener').ErrorListener;
-var Interval = require('./../IntervalSet').Interval;
+import { Interval } from "./../IntervalSet";
+import { ErrorListener } from "./ErrorListener";
+import { BitSet } from "./../Utils";
 
 function DiagnosticErrorListener(exactOnly) {
 	ErrorListener.call(this);

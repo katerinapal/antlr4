@@ -1,15 +1,9 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-var Set = require("../Utils").Set;
-var DFAState = require('./DFAState').DFAState;
-var StarLoopEntryState = require('../atn/ATNState').StarLoopEntryState;
-var ATNConfigSet = require('./../atn/ATNConfigSet').ATNConfigSet;
-var DFASerializer = require('./DFASerializer').DFASerializer;
-var LexerDFASerializer = require('./DFASerializer').LexerDFASerializer;
+import { LexerDFASerializer } from "./DFASerializer";
+import { DFASerializer } from "./DFASerializer";
+import { ATNConfigSet } from "./../atn/ATNConfigSet";
+import { StarLoopEntryState } from "../atn/ATNState";
+import { DFAState } from "./DFAState";
+import { Set } from "../Utils";
 
 
 

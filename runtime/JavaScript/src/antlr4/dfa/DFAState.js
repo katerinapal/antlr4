@@ -1,18 +1,11 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-var ATNConfigSet = require('./../atn/ATNConfigSet').ATNConfigSet;
-var Utils = require('./../Utils');
+import * as Utils from "./../Utils";
+import { ATNConfigSet } from "./../atn/ATNConfigSet";
 var Hash = Utils.Hash;
 var Set = Utils.Set;
 
 // Map a predicate to a predicted alternative.///
 
-function PredPrediction(pred, alt) {
+export function PredPrediction(pred, alt) {
 	this.alt = alt;
 	this.pred = pred;
 	return this;
@@ -47,7 +40,7 @@ PredPrediction.prototype.toString = function() {
 // meaning that state was reached via a different set of rule invocations.</p>
 // /
 
-function DFAState(stateNumber, configs) {
+export function DFAState(stateNumber, configs) {
 	if (stateNumber === null) {
 		stateNumber = -1;
 	}
@@ -147,6 +140,3 @@ DFAState.prototype.hashCode = function() {
     }
     return hash.finish();
 };
-
-exports.DFAState = DFAState;
-exports.PredPrediction = PredPrediction;

@@ -1,13 +1,18 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-exports.atn = require('./atn/index');
-exports.codepointat = require('./polyfills/codepointat');
-exports.dfa = require('./dfa/index');
-exports.fromcodepoint = require('./polyfills/fromcodepoint');
-exports.tree = require('./tree/index');
-exports.error = require('./error/index');
+import * as Utils from "./Utils";
+export { Utils };
+import * as pc from "./PredictionContext";
+import * as error from "./error/index";
+export { error };
+import * as tree from "./tree/index";
+export { tree };
+import * as fromcodepoint from "./polyfills/fromcodepoint";
+export { fromcodepoint };
+import * as dfa from "./dfa/index";
+export { dfa };
+import * as codepointat from "./polyfills/codepointat";
+export { codepointat };
+import * as atn from "./atn/index";
+export { atn };
 exports.Token = require('./Token').Token;
 exports.CharStreams = require('./CharStreams').CharStreams;
 exports.CommonToken = require('./Token').CommonToken;
@@ -16,8 +21,6 @@ exports.FileStream = require('./FileStream').FileStream;
 exports.CommonTokenStream = require('./CommonTokenStream').CommonTokenStream;
 exports.Lexer = require('./Lexer').Lexer;
 exports.Parser = require('./Parser').Parser;
-var pc = require('./PredictionContext');
 exports.PredictionContextCache = pc.PredictionContextCache;
 exports.ParserRuleContext = require('./ParserRuleContext').ParserRuleContext;
 exports.Interval = require('./IntervalSet').Interval;
-exports.Utils = require('./Utils');

@@ -1,28 +1,17 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-//
-// This enumeration defines the prediction modes available in ANTLR 4 along with
-// utility methods for analyzing configuration sets for conflicts and/or
-// ambiguities.
+import { equalArrays } from "./../Utils";
+import { hashStuff } from "./../Utils";
+import { Hash } from "../Utils";
+import { SemanticContext } from "./SemanticContext";
+import { ATNConfig } from "./ATNConfig";
+import { ATNConfigSet } from "./ATNConfigSet";
+import { RuleStopState } from "./ATNState";
+import { ATN } from "./ATN";
+import { AltDict } from "./../Utils";
+import { BitSet } from "./../Utils";
+import { Map } from "./../Utils";
+import { Set } from "./../Utils";
 
-var Set = require('./../Utils').Set;
-var Map = require('./../Utils').Map;
-var BitSet = require('./../Utils').BitSet;
-var AltDict = require('./../Utils').AltDict;
-var ATN = require('./ATN').ATN;
-var RuleStopState = require('./ATNState').RuleStopState;
-var ATNConfigSet = require('./ATNConfigSet').ATNConfigSet;
-var ATNConfig = require('./ATNConfig').ATNConfig;
-var SemanticContext = require('./SemanticContext').SemanticContext;
-var Hash = require("../Utils").Hash;
-var hashStuff = require('./../Utils').hashStuff;
-var equalArrays = require('./../Utils').equalArrays;
-
-function PredictionMode() {
+export function PredictionMode() {
 	return this;
 }
 
@@ -555,5 +544,3 @@ PredictionMode.getSingleViableAlt = function(altsets) {
 	}
     return result;
 };
-
-exports.PredictionMode = PredictionMode;

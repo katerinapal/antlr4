@@ -1,30 +1,13 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-// This implementation of {@link TokenStream} loads tokens from a
-// {@link TokenSource} on-demand, and places the tokens in a buffer to provide
-// access to any previous token by index.
-//
-// <p>
-// This token stream ignores the value of {@link Token//getChannel}. If your
-// parser requires the token stream filter tokens to only those on a particular
-// channel, such as {@link Token//DEFAULT_CHANNEL} or
-// {@link Token//HIDDEN_CHANNEL}, use a filtering token stream such a
-// {@link CommonTokenStream}.</p>
-
-var Token = require('./Token').Token;
-var Lexer = require('./Lexer').Lexer;
-var Interval = require('./IntervalSet').Interval;
+import { Interval } from "./IntervalSet";
+import { Lexer } from "./Lexer";
+import { Token } from "./Token";
 
 // this is just to keep meaningful parameter types to Parser
 function TokenStream() {
 	return this;
 }
 
-function BufferedTokenStream(tokenSource) {
+export function BufferedTokenStream(tokenSource) {
 
 	TokenStream.call(this);
 	// The {@link TokenSource} from which tokens for this stream are fetched.
@@ -371,5 +354,3 @@ BufferedTokenStream.prototype.fill = function() {
 		continue;
 	}
 };
-
-exports.BufferedTokenStream = BufferedTokenStream;

@@ -1,28 +1,10 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
+import { PrecedencePredicate } from "./SemanticContext";
+import { Predicate } from "./SemanticContext";
+import { IntervalSet } from "./../IntervalSet";
+import { Interval } from "./../IntervalSet";
+import { Token } from "./../Token";
 
-//  An ATN transition between any two ATN states.  Subclasses define
-//  atom, set, epsilon, action, predicate, rule transitions.
-//
-//  <p>This is a one way link.  It emanates from a state (usually via a list of
-//  transitions) and has a target state.</p>
-//
-//  <p>Since we never have to change the ATN transitions once we construct it,
-//  we can fix these transitions as specific classes. The DFA transitions
-//  on the other hand need to update the labels as it adds transitions to
-//  the states. We'll use the term Edge for the DFA to distinguish them from
-//  ATN transitions.</p>
-
-var Token = require('./../Token').Token;
-var Interval = require('./../IntervalSet').Interval;
-var IntervalSet = require('./../IntervalSet').IntervalSet;
-var Predicate = require('./SemanticContext').Predicate;
-var PrecedencePredicate = require('./SemanticContext').PrecedencePredicate;
-
-function Transition (target) {
+export function Transition(target) {
     // The target of this transition.
     if (target===undefined || target===null) {
         throw "target cannot be null.";
@@ -33,7 +15,8 @@ function Transition (target) {
     this.label = null;
     return this;
 }
-    // constants for serialization
+// constants for serialization
+
 Transition.EPSILON = 1;
 Transition.RANGE = 2;
 Transition.RULE = 3;
@@ -74,7 +57,7 @@ Transition.serializationTypes = {
 
 
 // TODO: make all transitions sets? no, should remove set edges
-function AtomTransition(target, label) {
+export function AtomTransition(target, label) {
 	Transition.call(this, target);
 	this.label_ = label; // The token type or character value; or, signifies special label.
     this.label = this.makeLabel();
@@ -99,7 +82,7 @@ AtomTransition.prototype.toString = function() {
 	return this.label_;
 };
 
-function RuleTransition(ruleStart, ruleIndex, precedence, followState) {
+export function RuleTransition(ruleStart, ruleIndex, precedence, followState) {
 	Transition.call(this, ruleStart);
     this.ruleIndex = ruleIndex; // ptr to the rule definition object for this rule ref
     this.precedence = precedence;
@@ -117,7 +100,7 @@ RuleTransition.prototype.matches = function(symbol, minVocabSymbol,  maxVocabSym
 };
 
 
-function EpsilonTransition(target, outermostPrecedenceReturn) {
+export function EpsilonTransition(target, outermostPrecedenceReturn) {
 	Transition.call(this, target);
     this.serializationType = Transition.EPSILON;
     this.isEpsilon = true;
@@ -136,7 +119,7 @@ EpsilonTransition.prototype.toString = function() {
 	return "epsilon";
 };
 
-function RangeTransition(target, start, stop) {
+export function RangeTransition(target, start, stop) {
 	Transition.call(this, target);
 	this.serializationType = Transition.RANGE;
     this.start = start;
@@ -162,7 +145,7 @@ RangeTransition.prototype.toString = function() {
 	return "'" + String.fromCharCode(this.start) + "'..'" + String.fromCharCode(this.stop) + "'";
 };
 
-function AbstractPredicateTransition(target) {
+export function AbstractPredicateTransition(target) {
 	Transition.call(this, target);
 	return this;
 }
@@ -170,7 +153,7 @@ function AbstractPredicateTransition(target) {
 AbstractPredicateTransition.prototype = Object.create(Transition.prototype);
 AbstractPredicateTransition.prototype.constructor = AbstractPredicateTransition;
 
-function PredicateTransition(target, ruleIndex, predIndex, isCtxDependent) {
+export function PredicateTransition(target, ruleIndex, predIndex, isCtxDependent) {
 	AbstractPredicateTransition.call(this, target);
     this.serializationType = Transition.PREDICATE;
     this.ruleIndex = ruleIndex;
@@ -195,7 +178,7 @@ PredicateTransition.prototype.toString = function() {
 	return "pred_" + this.ruleIndex + ":" + this.predIndex;
 };
 
-function ActionTransition(target, ruleIndex, actionIndex, isCtxDependent) {
+export function ActionTransition(target, ruleIndex, actionIndex, isCtxDependent) {
 	Transition.call(this, target);
     this.serializationType = Transition.ACTION;
     this.ruleIndex = ruleIndex;
@@ -219,7 +202,7 @@ ActionTransition.prototype.toString = function() {
 
 
 // A transition containing a set of values.
-function SetTransition(target, set) {
+export function SetTransition(target, set) {
 	Transition.call(this, target);
 	this.serializationType = Transition.SET;
     if (set !==undefined && set !==null) {
@@ -243,7 +226,7 @@ SetTransition.prototype.toString = function() {
 	return this.label.toString();
 };
 
-function NotSetTransition(target, set) {
+export function NotSetTransition(target, set) {
 	SetTransition.call(this, target, set);
 	this.serializationType = Transition.NOT_SET;
 	return this;
@@ -261,7 +244,7 @@ NotSetTransition.prototype.toString = function() {
 	return '~' + SetTransition.prototype.toString.call(this);
 };
 
-function WildcardTransition(target) {
+export function WildcardTransition(target) {
 	Transition.call(this, target);
 	this.serializationType = Transition.WILDCARD;
 	return this;
@@ -279,7 +262,7 @@ WildcardTransition.prototype.toString = function() {
 	return ".";
 };
 
-function PrecedencePredicateTransition(target, precedence) {
+export function PrecedencePredicateTransition(target, precedence) {
 	AbstractPredicateTransition.call(this, target);
     this.serializationType = Transition.PRECEDENCE;
     this.precedence = precedence;
@@ -301,16 +284,3 @@ PrecedencePredicateTransition.prototype.getPredicate = function() {
 PrecedencePredicateTransition.prototype.toString = function() {
 	return this.precedence + " >= _p";
 };
-
-exports.Transition = Transition;
-exports.AtomTransition = AtomTransition;
-exports.SetTransition = SetTransition;
-exports.NotSetTransition = NotSetTransition;
-exports.RuleTransition = RuleTransition;
-exports.ActionTransition = ActionTransition;
-exports.EpsilonTransition = EpsilonTransition;
-exports.RangeTransition = RangeTransition;
-exports.WildcardTransition = WildcardTransition;
-exports.PredicateTransition = PredicateTransition;
-exports.PrecedencePredicateTransition = PrecedencePredicateTransition;
-exports.AbstractPredicateTransition = AbstractPredicateTransition;

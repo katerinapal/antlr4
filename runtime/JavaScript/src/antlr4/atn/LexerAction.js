@@ -3,9 +3,9 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
- //
+//
 
-function LexerActionType() {
+export function LexerActionType() {
 }
 
 LexerActionType.CHANNEL = 0;     //The type of a {@link LexerChannelAction} action.
@@ -44,7 +44,7 @@ LexerAction.prototype.equals = function(other) {
 //
 // <p>The {@code skip} command does not have any parameters, so this action is
 // implemented as a singleton instance exposed by {@link //INSTANCE}.</p>
-function LexerSkipAction() {
+export function LexerSkipAction() {
 	LexerAction.call(this, LexerActionType.SKIP);
 	return this;
 }
@@ -65,7 +65,7 @@ LexerSkipAction.prototype.toString = function() {
 
 //  Implements the {@code type} lexer action by calling {@link Lexer//setType}
 // with the assigned type.
-function LexerTypeAction(type) {
+export function LexerTypeAction(type) {
 	LexerAction.call(this, LexerActionType.TYPE);
 	this.type = type;
 	return this;
@@ -99,7 +99,7 @@ LexerTypeAction.prototype.toString = function() {
 
 // Implements the {@code pushMode} lexer action by calling
 // {@link Lexer//pushMode} with the assigned mode.
-function LexerPushModeAction(mode) {
+export function LexerPushModeAction(mode) {
 	LexerAction.call(this, LexerActionType.PUSH_MODE);
     this.mode = mode;
     return this;
@@ -137,7 +137,7 @@ LexerPushModeAction.prototype.toString = function() {
 //
 // <p>The {@code popMode} command does not have any parameters, so this action is
 // implemented as a singleton instance exposed by {@link //INSTANCE}.</p>
-function LexerPopModeAction() {
+export function LexerPopModeAction() {
 	LexerAction.call(this,LexerActionType.POP_MODE);
 	return this;
 }
@@ -160,7 +160,7 @@ LexerPopModeAction.prototype.toString = function() {
 //
 // <p>The {@code more} command does not have any parameters, so this action is
 // implemented as a singleton instance exposed by {@link //INSTANCE}.</p>
-function LexerMoreAction() {
+export function LexerMoreAction() {
 	LexerAction.call(this, LexerActionType.MORE);
 	return this;
 }
@@ -182,7 +182,7 @@ LexerMoreAction.prototype.toString = function() {
 
 // Implements the {@code mode} lexer action by calling {@link Lexer//mode} with
 // the assigned mode.
-function LexerModeAction(mode) {
+export function LexerModeAction(mode) {
 	LexerAction.call(this, LexerActionType.MODE);
     this.mode = mode;
     return this;
@@ -225,15 +225,15 @@ LexerModeAction.prototype.toString = function() {
 // command argument could not be evaluated when the grammar was compiled.</p>
 
 
-    // Constructs a custom lexer action with the specified rule and action
-    // indexes.
-    //
-    // @param ruleIndex The rule index to use for calls to
-    // {@link Recognizer//action}.
-    // @param actionIndex The action index to use for calls to
-    // {@link Recognizer//action}.
+// Constructs a custom lexer action with the specified rule and action
+// indexes.
+//
+// @param ruleIndex The rule index to use for calls to
+// {@link Recognizer//action}.
+// @param actionIndex The action index to use for calls to
+// {@link Recognizer//action}.
 
-function LexerCustomAction(ruleIndex, actionIndex) {
+export function LexerCustomAction(ruleIndex, actionIndex) {
 	LexerAction.call(this, LexerActionType.CUSTOM);
     this.ruleIndex = ruleIndex;
     this.actionIndex = actionIndex;
@@ -268,7 +268,7 @@ LexerCustomAction.prototype.equals = function(other) {
 // {@link Lexer//setChannel} with the assigned channel.
 // Constructs a new {@code channel} action with the specified channel value.
 // @param channel The channel value to pass to {@link Lexer//setChannel}.
-function LexerChannelAction(channel) {
+export function LexerChannelAction(channel) {
 	LexerAction.call(this, LexerActionType.CHANNEL);
     this.channel = channel;
     return this;
@@ -321,7 +321,7 @@ LexerChannelAction.prototype.toString = function() {
 // executed.
 // @param action The lexer action to execute at a particular offset in the
 // input {@link CharStream}.
-function LexerIndexedCustomAction(offset, action) {
+export function LexerIndexedCustomAction(offset, action) {
 	LexerAction.call(this, action.actionType);
     this.offset = offset;
     this.action = action;
@@ -352,15 +352,3 @@ LexerIndexedCustomAction.prototype.equals = function(other) {
         return this.offset === other.offset && this.action === other.action;
     }
 };
-
-
-exports.LexerActionType = LexerActionType;
-exports.LexerSkipAction = LexerSkipAction;
-exports.LexerChannelAction = LexerChannelAction;
-exports.LexerCustomAction = LexerCustomAction;
-exports.LexerIndexedCustomAction = LexerIndexedCustomAction;
-exports.LexerMoreAction = LexerMoreAction;
-exports.LexerTypeAction = LexerTypeAction;
-exports.LexerPushModeAction = LexerPushModeAction;
-exports.LexerPopModeAction = LexerPopModeAction;
-exports.LexerModeAction = LexerModeAction;

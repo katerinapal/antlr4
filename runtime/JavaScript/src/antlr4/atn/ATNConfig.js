@@ -1,21 +1,6 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-// A tuple: (ATN state, predicted alt, syntactic, semantic context).
-//  The syntactic context is a graph-structured stack node whose
-//  path(s) to the root is the rule invocation(s)
-//  chain used to arrive at the state.  The semantic context is
-//  the tree of semantic predicates encountered before reaching
-//  an ATN state.
-///
-
-var DecisionState = require('./ATNState').DecisionState;
-var SemanticContext = require('./SemanticContext').SemanticContext;
-var Hash = require("../Utils").Hash;
+import { Hash } from "../Utils";
+import { SemanticContext } from "./SemanticContext";
+import { DecisionState } from "./ATNState";
 
 
 function checkParams(params, isCfg) {
@@ -39,7 +24,7 @@ function checkParams(params, isCfg) {
 	}
 }
 
-function ATNConfig(params, config) {
+export function ATNConfig(params, config) {
 	this.checkContext(params, config);
 	params = checkParams(params);
 	config = checkParams(config, true);
@@ -137,7 +122,7 @@ ATNConfig.prototype.toString = function() {
 };
 
 
-function LexerATNConfig(params, config) {
+export function LexerATNConfig(params, config) {
 	ATNConfig.call(this, params, config);
 
     // This is the backing field for {@link //getLexerActionExecutor}.
@@ -171,6 +156,3 @@ LexerATNConfig.prototype.checkNonGreedyDecision = function(source, target) {
     return source.passedThroughNonGreedyDecision ||
         (target instanceof DecisionState) && target.nonGreedy;
 };
-
-exports.ATNConfig = ATNConfig;
-exports.LexerATNConfig = LexerATNConfig;

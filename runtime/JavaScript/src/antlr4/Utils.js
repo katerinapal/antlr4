@@ -3,7 +3,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-function arrayToString(a) {
+export function arrayToString(a) {
     return "[" + a.join(", ") + "]";
 }
 
@@ -73,7 +73,7 @@ function standardHashCodeFunction(a) {
     return a.hashCode();
 }
 
-function Set(hashFunction, equalsFunction) {
+export function Set(hashFunction, equalsFunction) {
     this.data = {};
     this.hashFunction = hashFunction || standardHashCodeFunction;
     this.equalsFunction = equalsFunction || standardEqualsFunction;
@@ -142,7 +142,7 @@ Set.prototype.toString = function () {
     return arrayToString(this.values());
 };
 
-function BitSet() {
+export function BitSet() {
     this.data = [];
     return this;
 }
@@ -197,7 +197,7 @@ BitSet.prototype.toString = function () {
     return "{" + this.values().join(", ") + "}";
 };
 
-function Map(hashFunction, equalsFunction) {
+export function Map(hashFunction, equalsFunction) {
     this.data = {};
     this.hashFunction = hashFunction || standardHashCodeFunction;
     this.equalsFunction = equalsFunction || standardEqualsFunction;
@@ -295,7 +295,7 @@ Map.prototype.toString = function () {
 };
 
 
-function AltDict() {
+export function AltDict() {
     this.data = {};
     return this;
 }
@@ -323,11 +323,11 @@ AltDict.prototype.values = function () {
     });
 };
 
-function DoubleDict() {
+export function DoubleDict() {
     return this;
 }
 
-function Hash() {
+export function Hash() {
     this.count = 0;
     this.hash = 0;
     return this;
@@ -379,7 +379,7 @@ Hash.prototype.finish = function () {
     return hash;
 }
 
-function hashStuff() {
+export function hashStuff() {
     var hash = new Hash();
     hash.update.apply(arguments);
     return hash.finish();
@@ -400,7 +400,7 @@ DoubleDict.prototype.set = function (a, b, o) {
 };
 
 
-function escapeWhitespace(s, escapeSpaces) {
+export function escapeWhitespace(s, escapeSpaces) {
     s = s.replace(/\t/g, "\\t")
          .replace(/\n/g, "\\n")
          .replace(/\r/g, "\\r");
@@ -410,14 +410,13 @@ function escapeWhitespace(s, escapeSpaces) {
     return s;
 }
 
-function titleCase(str) {
+export function titleCase(str) {
     return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1);
     });
-};
+}
 
-function equalArrays(a, b)
-{
+export function equalArrays(a, b) {
     if (!Array.isArray(a) || !Array.isArray(b))
         return false;
     if (a == b)
@@ -431,16 +430,4 @@ function equalArrays(a, b)
             return false;
     }
     return true;
-};
-
-exports.Hash = Hash;
-exports.Set = Set;
-exports.Map = Map;
-exports.BitSet = BitSet;
-exports.AltDict = AltDict;
-exports.DoubleDict = DoubleDict;
-exports.hashStuff = hashStuff;
-exports.escapeWhitespace = escapeWhitespace;
-exports.arrayToString = arrayToString;
-exports.titleCase = titleCase;
-exports.equalArrays = equalArrays;
+}

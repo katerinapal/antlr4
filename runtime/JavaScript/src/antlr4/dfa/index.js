@@ -3,7 +3,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-exports.DFA = require('./DFA').DFA;
-exports.DFASerializer = require('./DFASerializer').DFASerializer;
-exports.LexerDFASerializer = require('./DFASerializer').LexerDFASerializer;
-exports.PredPrediction = require('./DFAState').PredPrediction;
+export var DFA = require('./DFA').DFA;;
+export var DFASerializer = require('./DFASerializer').DFASerializer;;
+export var LexerDFASerializer = require('./DFASerializer').LexerDFASerializer;;
+export var PredPrediction = require('./DFAState').PredPrediction;;

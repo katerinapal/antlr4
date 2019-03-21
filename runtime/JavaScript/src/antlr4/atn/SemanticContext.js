@@ -1,22 +1,7 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
+import { Hash } from "./../Utils";
+import { Set } from "./../Utils";
 
-// A tree structure used to record the semantic context in which
-//  an ATN configuration is valid.  It's either a single predicate,
-//  a conjunction {@code p1&&p2}, or a sum of products {@code p1||p2}.
-//
-//  <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
-//  {@link SemanticContext} within the scope of this outer class.</p>
-//
-
-var Set = require('./../Utils').Set;
-var Hash = require('./../Utils').Hash;
-
-function SemanticContext() {
+export function SemanticContext() {
 	return this;
 }
 
@@ -96,7 +81,7 @@ SemanticContext.orContext = function(a, b) {
 	}
 };
 
-function Predicate(ruleIndex, predIndex, isCtxDependent) {
+export function Predicate(ruleIndex, predIndex, isCtxDependent) {
 	SemanticContext.call(this);
 	this.ruleIndex = ruleIndex === undefined ? -1 : ruleIndex;
 	this.predIndex = predIndex === undefined ? -1 : predIndex;
@@ -138,7 +123,7 @@ Predicate.prototype.toString = function() {
 	return "{" + this.ruleIndex + ":" + this.predIndex + "}?";
 };
 
-function PrecedencePredicate(precedence) {
+export function PrecedencePredicate(precedence) {
 	SemanticContext.call(this);
 	this.precedence = precedence === undefined ? 0 : precedence;
 }
@@ -398,7 +383,3 @@ OR.prototype.toString = function() {
 	});
 	return s.length > 3 ? s.slice(3) : s;
 };
-
-exports.SemanticContext = SemanticContext;
-exports.PrecedencePredicate = PrecedencePredicate;
-exports.Predicate = Predicate;

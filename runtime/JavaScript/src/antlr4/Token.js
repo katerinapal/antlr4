@@ -8,7 +8,7 @@
 // (so we can ignore tabs), token channel, index, and source from which
 // we obtained this token.
 
-function Token() {
+export function Token() {
 	this.source = null;
 	this.type = null; // token type of the token
 	this.channel = null; // The parser ignores everything not on DEFAULT_CHANNEL
@@ -67,7 +67,7 @@ Token.prototype.getInputStream = function() {
 	return this.source[1];
 };
 
-function CommonToken(source, type, channel, start, stop) {
+export function CommonToken(source, type, channel, start, stop) {
 	Token.call(this);
 	this.source = source !== undefined ? source : CommonToken.EMPTY_SOURCE;
 	this.type = type !== undefined ? type : null;
@@ -146,6 +146,3 @@ CommonToken.prototype.toString = function() {
 			(this.channel > 0 ? ",channel=" + this.channel : "") + "," +
 			this.line + ":" + this.column + "]";
 };
-
-exports.Token = Token;
-exports.CommonToken = CommonToken;

@@ -1,35 +1,9 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
+import * as INVALID_ALT_NUMBER from "./atn/ATN";
+import { INVALID_INTERVAL } from "./tree/Tree";
+import { Trees } from "./tree/Trees";
+import { RuleNode } from "./tree/Tree";
 
-//  A rule context is a record of a single rule invocation. It knows
-//  which context invoked it, if any. If there is no parent context, then
-//  naturally the invoking state is not valid.  The parent link
-//  provides a chain upwards from the current rule invocation to the root
-//  of the invocation tree, forming a stack. We actually carry no
-//  information about the rule associated with this context (except
-//  when parsing). We keep only the state number of the invoking state from
-//  the ATN submachine that invoked this. Contrast this with the s
-//  pointer inside ParserRuleContext that tracks the current state
-//  being "executed" for the current rule.
-//
-//  The parent contexts are useful for computing lookahead sets and
-//  getting error information.
-//
-//  These objects are used during parsing and prediction.
-//  For the special case of parsers, we use the subclass
-//  ParserRuleContext.
-//
-//  @see ParserRuleContext
-///
-
-var RuleNode = require('./tree/Tree').RuleNode;
-var INVALID_INTERVAL = require('./tree/Tree').INVALID_INTERVAL;
-var INVALID_ALT_NUMBER = require('./atn/ATN').INVALID_ALT_NUMBER;
-
-function RuleContext(parent, invokingState) {
+export function RuleContext(parent, invokingState) {
 	RuleNode.call(this);
 	// What context invoked this rule?
 	this.parentCtx = parent || null;
@@ -116,10 +90,6 @@ RuleContext.prototype.getChildCount = function() {
 RuleContext.prototype.accept = function(visitor) {
 	return visitor.visitChildren(this);
 };
-
-//need to manage circular dependencies, so export now
-exports.RuleContext = RuleContext;
-var Trees = require('./tree/Trees').Trees;
 
 
 // Print out a whole tree, not just a node, in LISP format

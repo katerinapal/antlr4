@@ -1,17 +1,6 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
+import { PredicateTransition } from "./../atn/Transition";
 
-// The root of the ANTLR exception hierarchy. In general, ANTLR tracks just
-//  3 kinds of errors: prediction errors, failed predicate errors, and
-//  mismatched input errors. In each case, the parser knows where it is
-//  in the input, where it is in the ATN, the rule invocation stack,
-//  and what kind of problem occurred.
-
-var PredicateTransition = require('./../atn/Transition').PredicateTransition;
-
-function RecognitionException(params) {
+export function RecognitionException(params) {
 	Error.call(this);
 	if (!!Error.captureStackTrace) {
         Error.captureStackTrace(this, RecognitionException);
@@ -65,7 +54,7 @@ RecognitionException.prototype.toString = function() {
     return this.message;
 };
 
-function LexerNoViableAltException(lexer, input, startIndex, deadEndConfigs) {
+export function LexerNoViableAltException(lexer, input, startIndex, deadEndConfigs) {
 	RecognitionException.call(this, {message:"", recognizer:lexer, input:input, ctx:null});
     this.startIndex = startIndex;
     this.deadEndConfigs = deadEndConfigs;
@@ -88,7 +77,7 @@ LexerNoViableAltException.prototype.toString = function() {
 // of the offending input and also knows where the parser was
 // in the various paths when the error. Reported by reportNoViableAlternative()
 //
-function NoViableAltException(recognizer, input, startToken, offendingToken, deadEndConfigs, ctx) {
+export function NoViableAltException(recognizer, input, startToken, offendingToken, deadEndConfigs, ctx) {
 	ctx = ctx || recognizer._ctx;
 	offendingToken = offendingToken || recognizer.getCurrentToken();
 	startToken = startToken || recognizer.getCurrentToken();
@@ -111,7 +100,7 @@ NoViableAltException.prototype.constructor = NoViableAltException;
 // This signifies any kind of mismatched input exceptions such as
 // when the current input does not match the expected token.
 //
-function InputMismatchException(recognizer) {
+export function InputMismatchException(recognizer) {
 	RecognitionException.call(this, {message:"", recognizer:recognizer, input:recognizer.getInputStream(), ctx:recognizer._ctx});
     this.offendingToken = recognizer.getCurrentToken();
 }
@@ -124,7 +113,7 @@ InputMismatchException.prototype.constructor = InputMismatchException;
 // Disambiguating predicate evaluation occurs when we test a predicate during
 // prediction.
 
-function FailedPredicateException(recognizer, predicate, message) {
+export function FailedPredicateException(recognizer, predicate, message) {
 	RecognitionException.call(this, {message:this.formatMessage(predicate,message || null), recognizer:recognizer,
                          input:recognizer.getInputStream(), ctx:recognizer._ctx});
     var s = recognizer._interp.atn.states[recognizer.state];
@@ -152,7 +141,7 @@ FailedPredicateException.prototype.formatMessage = function(predicate, message) 
     }
 };
 
-function ParseCancellationException() {
+export function ParseCancellationException() {
 	Error.call(this);
 	Error.captureStackTrace(this, ParseCancellationException);
 	return this;
@@ -160,10 +149,3 @@ function ParseCancellationException() {
 
 ParseCancellationException.prototype = Object.create(Error.prototype);
 ParseCancellationException.prototype.constructor = ParseCancellationException;
-
-exports.RecognitionException = RecognitionException;
-exports.NoViableAltException = NoViableAltException;
-exports.LexerNoViableAltException = LexerNoViableAltException;
-exports.InputMismatchException = InputMismatchException;
-exports.FailedPredicateException = FailedPredicateException;
-exports.ParseCancellationException = ParseCancellationException;

@@ -1,12 +1,8 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
+import { Token } from "./../Token";
+import { IntervalSet } from "./../IntervalSet";
+import { LL1Analyzer } from "./../LL1Analyzer";
 
-var LL1Analyzer = require('./../LL1Analyzer').LL1Analyzer;
-var IntervalSet = require('./../IntervalSet').IntervalSet;
-
-function ATN(grammarType , maxTokenType) {
+export function ATN(grammarType, maxTokenType) {
 
     // Used for runtime deserialization of ATNs from strings///
     // The type of the ATN.
@@ -92,25 +88,6 @@ ATN.prototype.getDecisionState = function( decision) {
     }
 };
 
-// Computes the set of input symbols which could follow ATN state number
-// {@code stateNumber} in the specified full {@code context}. This method
-// considers the complete parser context, but does not evaluate semantic
-// predicates (i.e. all predicates encountered during the calculation are
-// assumed true). If a path in the ATN exists from the starting state to the
-// {@link RuleStopState} of the outermost context without matching any
-// symbols, {@link Token//EOF} is added to the returned set.
-//
-// <p>If {@code context} is {@code null}, it is treated as
-// {@link ParserRuleContext//EMPTY}.</p>
-//
-// @param stateNumber the ATN state number
-// @param context the full parse context
-// @return The set of potentially valid input symbols which could follow the
-// specified state in the specified context.
-// @throws IllegalArgumentException if the ATN does not contain a state with
-// number {@code stateNumber}
-var Token = require('./../Token').Token;
-
 ATN.prototype.getExpectedTokens = function( stateNumber, ctx ) {
     if ( stateNumber < 0 || stateNumber >= this.states.length ) {
         throw("Invalid state number.");
@@ -138,5 +115,3 @@ ATN.prototype.getExpectedTokens = function( stateNumber, ctx ) {
 };
 
 ATN.INVALID_ALT_NUMBER = 0;
-
-exports.ATN = ATN;

@@ -1,13 +1,6 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-
-var Token = require('./Token').Token;
-require('./polyfills/codepointat');
-require('./polyfills/fromcodepoint');
+import "./polyfills/fromcodepoint";
+import "./polyfills/codepointat";
+import { Token } from "./Token";
 
 // Vacuum all input from a string and then treat it like a buffer.
 
@@ -34,7 +27,7 @@ function _loadString(stream) {
 //
 // Otherwise, the input is treated as a series of 16-bit UTF-16 code
 // units.
-function InputStream(data, decodeToUnicodeCodePoints) {
+export function InputStream(data, decodeToUnicodeCodePoints) {
 	this.name = "<empty>";
 	this.strdata = data;
 	this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints || false;
@@ -131,5 +124,3 @@ InputStream.prototype.getText = function(start, stop) {
 InputStream.prototype.toString = function() {
 	return this.strdata;
 };
-
-exports.InputStream = InputStream;

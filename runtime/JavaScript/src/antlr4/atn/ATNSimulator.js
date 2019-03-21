@@ -1,15 +1,8 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
+import { getCachedPredictionContext } from "./../PredictionContext";
+import { ATNConfigSet } from "./ATNConfigSet";
+import { DFAState } from "./../dfa/DFAState";
 
-var DFAState = require('./../dfa/DFAState').DFAState;
-var ATNConfigSet = require('./ATNConfigSet').ATNConfigSet;
-var getCachedPredictionContext = require('./../PredictionContext').getCachedPredictionContext;
-
-function ATNSimulator(atn, sharedContextCache) {
+export function ATNSimulator(atn, sharedContextCache) {
 
     // The context cache maps all PredictionContext objects that are ==
     //  to a single cached copy. This cache is shared across all contexts
@@ -47,5 +40,3 @@ ATNSimulator.prototype.getCachedContext = function(context) {
     var visited = {};
     return getCachedPredictionContext(context, this.sharedContextCache, visited);
 };
-
-exports.ATNSimulator = ATNSimulator;

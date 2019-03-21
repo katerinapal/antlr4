@@ -1,21 +1,9 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-//
-// Specialized {@link Set}{@code <}{@link ATNConfig}{@code >} that can track
-// info about the set, with support for combining similar configurations using a
-// graph-structured stack.
-///
-
-var ATN = require('./ATN').ATN;
-var Utils = require('./../Utils');
+import * as Utils from "./../Utils";
+import { merge } from "./../PredictionContext";
+import { SemanticContext } from "./SemanticContext";
+import { ATN } from "./ATN";
 var Hash = Utils.Hash;
 var Set = Utils.Set;
-var SemanticContext = require('./SemanticContext').SemanticContext;
-var merge = require('./../PredictionContext').merge;
 
 function hashATNConfig(c) {
 	return c.hashCodeForConfigSet();
@@ -31,7 +19,7 @@ function equalATNConfigs(a, b) {
  }
 
 
-function ATNConfigSet(fullCtx) {
+export function ATNConfigSet(fullCtx) {
 	//
 	// The reason that we need this is because we don't want the hash map to use
 	// the standard hash code and equals. We need all configurations with the
@@ -242,7 +230,7 @@ ATNConfigSet.prototype.toString = function() {
 		(this.dipsIntoOuterContext ? ",dipsIntoOuterContext" : "");
 };
 
-function OrderedATNConfigSet() {
+export function OrderedATNConfigSet() {
 	ATNConfigSet.call(this);
 	this.configLookup = new Set();
 	return this;
@@ -250,6 +238,3 @@ function OrderedATNConfigSet() {
 
 OrderedATNConfigSet.prototype = Object.create(ATNConfigSet.prototype);
 OrderedATNConfigSet.prototype.constructor = OrderedATNConfigSet;
-
-exports.ATNConfigSet = ATNConfigSet;
-exports.OrderedATNConfigSet = OrderedATNConfigSet;

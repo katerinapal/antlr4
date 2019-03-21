@@ -1,14 +1,7 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-/*jslint smarttabs:true */
-
-var Token = require('./Token').Token;
+import { Token } from "./Token";
 
 /* stop is not included! */
-function Interval(start, stop) {
+export function Interval(start, stop) {
 	this.start = start;
 	this.stop = stop;
 	return this;
@@ -33,7 +26,7 @@ Object.defineProperty(Interval.prototype, "length", {
 	}
 });
 
-function IntervalSet() {
+export function IntervalSet() {
 	this.intervals = null;
 	this.readOnly = false;
 }
@@ -293,6 +286,3 @@ IntervalSet.prototype.elementName = function(literalNames, symbolicNames, a) {
 		return literalNames[a] || symbolicNames[a];
 	}
 };
-
-exports.Interval = Interval;
-exports.IntervalSet = IntervalSet;

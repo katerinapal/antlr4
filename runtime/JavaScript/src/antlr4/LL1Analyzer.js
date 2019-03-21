@@ -1,28 +1,20 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-var Set = require('./Utils').Set;
-var BitSet = require('./Utils').BitSet;
-var Token = require('./Token').Token;
-var ATNConfig = require('./atn/ATNConfig').ATNConfig;
-var Interval = require('./IntervalSet').Interval;
-var IntervalSet = require('./IntervalSet').IntervalSet;
-var RuleStopState = require('./atn/ATNState').RuleStopState;
-var RuleTransition = require('./atn/Transition').RuleTransition;
-var NotSetTransition = require('./atn/Transition').NotSetTransition;
-var WildcardTransition = require('./atn/Transition').WildcardTransition;
-var AbstractPredicateTransition = require('./atn/Transition').AbstractPredicateTransition;
-
-var pc = require('./PredictionContext');
+import * as pc from "./PredictionContext";
+import { AbstractPredicateTransition } from "./atn/Transition";
+import { WildcardTransition } from "./atn/Transition";
+import { NotSetTransition } from "./atn/Transition";
+import { RuleTransition } from "./atn/Transition";
+import { RuleStopState } from "./atn/ATNState";
+import { IntervalSet } from "./IntervalSet";
+import { Interval } from "./IntervalSet";
+import { ATNConfig } from "./atn/ATNConfig";
+import { Token } from "./Token";
+import { BitSet } from "./Utils";
+import { Set } from "./Utils";
 var predictionContextFromRuleContext = pc.predictionContextFromRuleContext;
 var PredictionContext = pc.PredictionContext;
 var SingletonPredictionContext = pc.SingletonPredictionContext;
 
-function LL1Analyzer (atn) {
+export function LL1Analyzer(atn) {
     this.atn = atn;
 }
 
@@ -194,6 +186,4 @@ LL1Analyzer.prototype._LOOK = function(s, stopState , ctx, look, lookBusy, calle
         }
     }
 };
-
-exports.LL1Analyzer = LL1Analyzer;
 

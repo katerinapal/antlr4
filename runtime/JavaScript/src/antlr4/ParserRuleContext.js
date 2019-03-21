@@ -1,40 +1,12 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-//* A rule invocation record for parsing.
-//
-//  Contains all of the information about the current rule not stored in the
-//  RuleContext. It handles parse tree children list, Any ATN state
-//  tracing, and the default values available for rule indications:
-//  start, stop, rule index, current alt number, current
-//  ATN state.
-//
-//  Subclasses made for each rule and grammar track the parameters,
-//  return values, locals, and labels specific to that rule. These
-//  are the objects that are returned from rules.
-//
-//  Note text is not an actual field of a rule return value; it is computed
-//  from start and stop using the input stream's toString() method.  I
-//  could add a ctor to this so that we can pass in and store the input
-//  stream, but I'm not sure we want to do that.  It would seem to be undefined
-//  to get the .text property anyway if the rule matches tokens from multiple
-//  input streams.
-//
-//  I do not use getters for fields of objects that are used simply to
-//  group values such as this aggregate.  The getters/setters are there to
-//  satisfy the superclass interface.
-
-var RuleContext = require('./RuleContext').RuleContext;
-var Tree = require('./tree/Tree');
+import * as Tree from "./tree/Tree";
+import { Interval } from "./IntervalSet";
+import { RuleContext } from "./RuleContext";
 var INVALID_INTERVAL = Tree.INVALID_INTERVAL;
 var TerminalNode = Tree.TerminalNode;
 var TerminalNodeImpl = Tree.TerminalNodeImpl;
 var ErrorNodeImpl = Tree.ErrorNodeImpl;
-var Interval = require("./IntervalSet").Interval;
 
-function ParserRuleContext(parent, invokingStateNumber) {
+export function ParserRuleContext(parent, invokingStateNumber) {
 	parent = parent || null;
 	invokingStateNumber = invokingStateNumber || null;
 	RuleContext.call(this, parent, invokingStateNumber);
@@ -221,5 +193,3 @@ function InterpreterRuleContext(parent, invokingStateNumber, ruleIndex) {
 
 InterpreterRuleContext.prototype = Object.create(ParserRuleContext.prototype);
 InterpreterRuleContext.prototype.constructor = InterpreterRuleContext;
-
-exports.ParserRuleContext = ParserRuleContext;

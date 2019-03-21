@@ -8,7 +8,7 @@
 // default implementation of each method does nothing, but can be overridden as
 // necessary.
 
-function ErrorListener() {
+export function ErrorListener() {
 	return this;
 }
 
@@ -24,7 +24,7 @@ ErrorListener.prototype.reportAttemptingFullContext = function(recognizer, dfa, 
 ErrorListener.prototype.reportContextSensitivity = function(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
 };
 
-function ConsoleErrorListener() {
+export function ConsoleErrorListener() {
 	ErrorListener.call(this);
 	return this;
 }
@@ -53,7 +53,7 @@ ConsoleErrorListener.prototype.syntaxError = function(recognizer, offendingSymbo
     console.error("line " + line + ":" + column + " " + msg);
 };
 
-function ProxyErrorListener(delegates) {
+export function ProxyErrorListener(delegates) {
 	ErrorListener.call(this);
     if (delegates===null) {
         throw "delegates";
@@ -80,8 +80,4 @@ ProxyErrorListener.prototype.reportAttemptingFullContext = function(recognizer, 
 ProxyErrorListener.prototype.reportContextSensitivity = function(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
 	this.delegates.map(function(d) { d.reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs); });
 };
-
-exports.ErrorListener = ErrorListener;
-exports.ConsoleErrorListener = ConsoleErrorListener;
-exports.ProxyErrorListener = ProxyErrorListener;
 

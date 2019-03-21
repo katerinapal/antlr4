@@ -1,24 +1,14 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-// A lexer is recognizer that draws input symbols from a character stream.
-//  lexer grammars result in a subclass of this object. A Lexer object
-//  uses simplified match() and error recovery mechanisms in the interest of speed.
-
-var Token = require('./Token').Token;
-var Recognizer = require('./Recognizer').Recognizer;
-var CommonTokenFactory = require('./CommonTokenFactory').CommonTokenFactory;
-var RecognitionException  = require('./error/Errors').RecognitionException;
-var LexerNoViableAltException = require('./error/Errors').LexerNoViableAltException;
+import { LexerNoViableAltException } from "./error/Errors";
+import { RecognitionException } from "./error/Errors";
+import { CommonTokenFactory } from "./CommonTokenFactory";
+import { Recognizer } from "./Recognizer";
+import { Token } from "./Token";
 
 function TokenSource() {
 	return this;
 }
 
-function Lexer(input) {
+export function Lexer(input) {
 	Recognizer.call(this);
 	this._input = input;
 	this._factory = CommonTokenFactory.DEFAULT;
@@ -367,5 +357,3 @@ Lexer.prototype.recover = function(re) {
 		}
 	}
 };
-
-exports.Lexer = Lexer;

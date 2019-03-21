@@ -1,17 +1,7 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-// The basic notion of a tree has a parent, a payload, and a list of children.
-//  It is the most abstract interface for all the trees used by ANTLR.
-///
-
-var Token = require('./../Token').Token;
-var Interval = require('./../IntervalSet').Interval;
-var INVALID_INTERVAL = new Interval(-1, -2);
-var Utils = require('../Utils.js');
+import * as Utils from "../Utils.js";
+import { Interval } from "./../IntervalSet";
+import { Token } from "./../Token";
+export var INVALID_INTERVAL = new Interval(-1, -2);
 
 
 function Tree() {
@@ -34,7 +24,7 @@ function ParseTree() {
 ParseTree.prototype = Object.create(SyntaxTree.prototype);
 ParseTree.prototype.constructor = ParseTree;
 
-function RuleNode() {
+export function RuleNode() {
 	ParseTree.call(this);
 	return this;
 }
@@ -42,7 +32,7 @@ function RuleNode() {
 RuleNode.prototype = Object.create(ParseTree.prototype);
 RuleNode.prototype.constructor = RuleNode;
 
-function TerminalNode() {
+export function TerminalNode() {
 	ParseTree.call(this);
 	return this;
 }
@@ -50,7 +40,7 @@ function TerminalNode() {
 TerminalNode.prototype = Object.create(ParseTree.prototype);
 TerminalNode.prototype.constructor = TerminalNode;
 
-function ErrorNode() {
+export function ErrorNode() {
 	TerminalNode.call(this);
 	return this;
 }
@@ -58,7 +48,7 @@ function ErrorNode() {
 ErrorNode.prototype = Object.create(TerminalNode.prototype);
 ErrorNode.prototype.constructor = ErrorNode;
 
-function ParseTreeVisitor() {
+export function ParseTreeVisitor() {
 	return this;
 }
 
@@ -87,7 +77,7 @@ ParseTreeVisitor.prototype.visitErrorNode = function(node) {
 };
 
 
-function ParseTreeListener() {
+export function ParseTreeListener() {
 	return this;
 }
 
@@ -103,7 +93,7 @@ ParseTreeListener.prototype.enterEveryRule = function(node) {
 ParseTreeListener.prototype.exitEveryRule = function(node) {
 };
 
-function TerminalNodeImpl(symbol) {
+export function TerminalNodeImpl(symbol) {
 	TerminalNode.call(this);
 	this.parentCtx = null;
 	this.symbol = symbol;
@@ -163,7 +153,7 @@ TerminalNodeImpl.prototype.toString = function() {
 // and deletion as well as during "consume until error recovery set"
 // upon no viable alternative exceptions.
 
-function ErrorNodeImpl(token) {
+export function ErrorNodeImpl(token) {
 	TerminalNodeImpl.call(this, token);
 	return this;
 }
@@ -179,7 +169,7 @@ ErrorNodeImpl.prototype.accept = function(visitor) {
 	return visitor.visitErrorNode(this);
 };
 
-function ParseTreeWalker() {
+export function ParseTreeWalker() {
 	return this;
 }
 
@@ -218,13 +208,3 @@ ParseTreeWalker.prototype.exitRule = function(listener, r) {
 };
 
 ParseTreeWalker.DEFAULT = new ParseTreeWalker();
-
-exports.RuleNode = RuleNode;
-exports.ErrorNode = ErrorNode;
-exports.TerminalNode = TerminalNode;
-exports.ErrorNodeImpl = ErrorNodeImpl;
-exports.TerminalNodeImpl = TerminalNodeImpl;
-exports.ParseTreeListener = ParseTreeListener;
-exports.ParseTreeVisitor = ParseTreeVisitor;
-exports.ParseTreeWalker = ParseTreeWalker;
-exports.INVALID_INTERVAL = INVALID_INTERVAL;

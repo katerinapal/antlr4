@@ -6,7 +6,7 @@
 // A DFA walker that knows how to dump them to serialized strings.#/
 
 
-function DFASerializer(dfa, literalNames, symbolicNames) {
+export function DFASerializer(dfa, literalNames, symbolicNames) {
 	this.dfa = dfa;
 	this.literalNames = literalNames || [];
 	this.symbolicNames = symbolicNames || [];
@@ -62,7 +62,7 @@ DFASerializer.prototype.getStateString = function(s) {
     }
 };
 
-function LexerDFASerializer(dfa) {
+export function LexerDFASerializer(dfa) {
 	DFASerializer.call(this, dfa, null);
 	return this;
 }
@@ -73,7 +73,4 @@ LexerDFASerializer.prototype.constructor = LexerDFASerializer;
 LexerDFASerializer.prototype.getEdgeLabel = function(i) {
 	return "'" + String.fromCharCode(i) + "'";
 };
-
-exports.DFASerializer = DFASerializer;
-exports.LexerDFASerializer = LexerDFASerializer;
 

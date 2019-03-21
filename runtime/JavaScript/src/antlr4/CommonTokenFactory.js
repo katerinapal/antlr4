@@ -1,22 +1,10 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-
-//
-// This default implementation of {@link TokenFactory} creates
-// {@link CommonToken} objects.
-//
-
-var CommonToken = require('./Token').CommonToken;
+import { CommonToken } from "./Token";
 
 function TokenFactory() {
 	return this;
 }
 
-function CommonTokenFactory(copyText) {
+export function CommonTokenFactory(copyText) {
 	TokenFactory.call(this);
     // Indicates whether {@link CommonToken//setText} should be called after
     // constructing tokens to explicitly set the text. This is useful for cases
@@ -65,5 +53,3 @@ CommonTokenFactory.prototype.createThin = function(type, text) {
     t.text = text;
     return t;
 };
-
-exports.CommonTokenFactory = CommonTokenFactory;

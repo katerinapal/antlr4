@@ -1,12 +1,12 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-var Token = require('./../Token').Token;
-var ATN = require('./ATN').ATN;
-var ATNType = require('./ATNType').ATNType;
-var ATNStates = require('./ATNState');
+import * as LexerActions from "./LexerAction";
+import * as Transitions from "./Transition";
+import * as ATNStates from "./ATNState";
+import { ATNDeserializationOptions } from "./ATNDeserializationOptions";
+import { Interval } from "./../IntervalSet";
+import { IntervalSet } from "./../IntervalSet";
+import { ATNType } from "./ATNType";
+import { ATN } from "./ATN";
+import { Token } from "./../Token";
 var ATNState = ATNStates.ATNState;
 var BasicState = ATNStates.BasicState;
 var DecisionState = ATNStates.DecisionState;
@@ -22,7 +22,6 @@ var StarLoopEntryState = ATNStates.StarLoopEntryState;
 var PlusBlockStartState = ATNStates.PlusBlockStartState;
 var StarBlockStartState = ATNStates.StarBlockStartState;
 var BasicBlockStartState = ATNStates.BasicBlockStartState;
-var Transitions = require('./Transition');
 var Transition = Transitions.Transition;
 var AtomTransition = Transitions.AtomTransition;
 var SetTransition = Transitions.SetTransition;
@@ -34,10 +33,6 @@ var EpsilonTransition = Transitions.EpsilonTransition;
 var WildcardTransition = Transitions.WildcardTransition;
 var PredicateTransition = Transitions.PredicateTransition;
 var PrecedencePredicateTransition = Transitions.PrecedencePredicateTransition;
-var IntervalSet = require('./../IntervalSet').IntervalSet;
-var Interval = require('./../IntervalSet').Interval;
-var ATNDeserializationOptions = require('./ATNDeserializationOptions').ATNDeserializationOptions;
-var LexerActions = require('./LexerAction');
 var LexerActionType = LexerActions.LexerActionType;
 var LexerSkipAction = LexerActions.LexerSkipAction;
 var LexerChannelAction = LexerActions.LexerChannelAction;
@@ -73,7 +68,7 @@ function initArray( length, value) {
 	return tmp.map(function(i) {return value;});
 }
 
-function ATNDeserializer (options) {
+export function ATNDeserializer(options) {
 
     if ( options=== undefined || options === null ) {
         options = ATNDeserializationOptions.defaultOptions;
@@ -673,6 +668,3 @@ ATNDeserializer.prototype.lexerActionFactory = function(type, data1, data2) {
         return this.actionFactories[type](data1, data2);
     }
 };
-
-
-exports.ATNDeserializer = ATNDeserializer;

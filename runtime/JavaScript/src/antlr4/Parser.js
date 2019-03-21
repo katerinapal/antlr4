@@ -1,16 +1,12 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-var Token = require('./Token').Token;
-var ParseTreeListener = require('./tree/Tree').ParseTreeListener;
-var Recognizer = require('./Recognizer').Recognizer;
-var DefaultErrorStrategy = require('./error/ErrorStrategy').DefaultErrorStrategy;
-var ATNDeserializer = require('./atn/ATNDeserializer').ATNDeserializer;
-var ATNDeserializationOptions = require('./atn/ATNDeserializationOptions').ATNDeserializationOptions;
-var TerminalNode = require('./tree/Tree').TerminalNode;
-var ErrorNode = require('./tree/Tree').ErrorNode;
+import { Lexer } from "./Lexer";
+import { ErrorNode } from "./tree/Tree";
+import { TerminalNode } from "./tree/Tree";
+import { ATNDeserializationOptions } from "./atn/ATNDeserializationOptions";
+import { ATNDeserializer } from "./atn/ATNDeserializer";
+import { DefaultErrorStrategy } from "./error/ErrorStrategy";
+import { Recognizer } from "./Recognizer";
+import { ParseTreeListener } from "./tree/Tree";
+import { Token } from "./Token";
 
 function TraceListener(parser) {
 	ParseTreeListener.call(this);
@@ -282,19 +278,6 @@ Parser.prototype.getATNWithBypassAlts = function() {
 	}
 	return result;
 };
-
-// The preferred method of getting a tree pattern. For example, here's a
-// sample use:
-//
-// <pre>
-// ParseTree t = parser.expr();
-// ParseTreePattern p = parser.compileParseTreePattern("&lt;ID&gt;+0",
-// MyParser.RULE_expr);
-// ParseTreeMatch m = p.match(t);
-// String id = m.get("ID");
-// </pre>
-
-var Lexer = require('./Lexer').Lexer;
 
 Parser.prototype.compileParseTreePattern = function(pattern, patternRuleIndex, lexer) {
 	lexer = lexer || null;

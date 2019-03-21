@@ -1,15 +1,8 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
+import { ProxyErrorListener } from "./error/ErrorListener";
+import { ConsoleErrorListener } from "./error/ErrorListener";
+import { Token } from "./Token";
 
-var Token = require('./Token').Token;
-var ConsoleErrorListener = require('./error/ErrorListener').ConsoleErrorListener;
-var ProxyErrorListener = require('./error/ErrorListener').ProxyErrorListener;
-
-function Recognizer() {
+export function Recognizer() {
     this._listeners = [ ConsoleErrorListener.INSTANCE ];
     this._interp = null;
     this._stateNumber = -1;
@@ -142,6 +135,3 @@ Object.defineProperty(Recognizer.prototype, "state", {
 		this._stateNumber = state;
 	}
 });
-
-
-exports.Recognizer = Recognizer;

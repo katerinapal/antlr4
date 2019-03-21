@@ -1,40 +1,17 @@
-//
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-///
-
-// When we hit an accept state in either the DFA or the ATN, we
-//  have to notify the character stream to start buffering characters
-//  via {@link IntStream//mark} and record the current state. The current sim state
-//  includes the current index into the input, the current line,
-//  and current character position in that line. Note that the Lexer is
-//  tracking the starting line and characterization of the token. These
-//  variables track the "state" of the simulator when it hits an accept state.
-//
-//  <p>We track these variables separately for the DFA and ATN simulation
-//  because the DFA simulation often has to fail over to the ATN
-//  simulation. If the ATN simulation fails, we need the DFA to fall
-//  back to its previously accepted state, if any. If the ATN succeeds,
-//  then the ATN does the accept and the DFA simulator that invoked it
-//  can simply return the predicted token type.</p>
-///
-
-var Token = require('./../Token').Token;
-var Lexer = require('./../Lexer').Lexer;
-var ATN = require('./ATN').ATN;
-var ATNSimulator = require('./ATNSimulator').ATNSimulator;
-var DFAState = require('./../dfa/DFAState').DFAState;
-var ATNConfigSet = require('./ATNConfigSet').ATNConfigSet;
-var OrderedATNConfigSet = require('./ATNConfigSet').OrderedATNConfigSet;
-var PredictionContext = require('./../PredictionContext').PredictionContext;
-var SingletonPredictionContext = require('./../PredictionContext').SingletonPredictionContext;
-var RuleStopState = require('./ATNState').RuleStopState;
-var LexerATNConfig = require('./ATNConfig').LexerATNConfig;
-var Transition = require('./Transition').Transition;
-var LexerActionExecutor = require('./LexerActionExecutor').LexerActionExecutor;
-var LexerNoViableAltException = require('./../error/Errors').LexerNoViableAltException;
+import { LexerNoViableAltException } from "./../error/Errors";
+import { LexerActionExecutor } from "./LexerActionExecutor";
+import { Transition } from "./Transition";
+import { LexerATNConfig } from "./ATNConfig";
+import { RuleStopState } from "./ATNState";
+import { SingletonPredictionContext } from "./../PredictionContext";
+import { PredictionContext } from "./../PredictionContext";
+import { OrderedATNConfigSet } from "./ATNConfigSet";
+import { ATNConfigSet } from "./ATNConfigSet";
+import { DFAState } from "./../dfa/DFAState";
+import { ATNSimulator } from "./ATNSimulator";
+import { ATN } from "./ATN";
+import { Lexer } from "./../Lexer";
+import { Token } from "./../Token";
 
 function resetSimState(sim) {
 	sim.index = -1;

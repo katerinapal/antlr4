@@ -1,20 +1,14 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-var Utils = require('./../Utils');
-var Token = require('./../Token').Token;
-var RuleNode = require('./Tree').RuleNode;
-var ErrorNode = require('./Tree').ErrorNode;
-var TerminalNode = require('./Tree').TerminalNode;
-var ParserRuleContext = require('./../ParserRuleContext').ParserRuleContext;
-var RuleContext = require('./../RuleContext').RuleContext;
-var INVALID_ALT_NUMBER = require('./../atn/ATN').INVALID_ALT_NUMBER;
-
+import * as INVALID_ALT_NUMBER from "./../atn/ATN";
+import * as Utils from "./../Utils";
+import { RuleContext } from "./../RuleContext";
+import { ParserRuleContext } from "./../ParserRuleContext";
+import { TerminalNode } from "./Tree";
+import { ErrorNode } from "./Tree";
+import { RuleNode } from "./Tree";
+import { Token } from "./../Token";
 
 /** A set of utility routines useful for all kinds of ANTLR trees. */
-function Trees() {
+export function Trees() {
 }
 
 // Print out a whole tree in LISP form. {@link //getNodeText} is used on the
@@ -135,6 +129,3 @@ Trees.descendants = function(t) {
     }
     return nodes;
 };
-
-
-exports.Trees = Trees;
